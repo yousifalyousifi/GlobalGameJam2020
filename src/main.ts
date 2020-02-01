@@ -25,95 +25,34 @@ export class GameScene extends Phaser.Scene {
 
   public create() {
 
-    var worldWidth = 1600;
-    var worldHeight = 1200;
+    var worldWidth = 600;
+    var worldHeight = 600;
     this.matter.world.setBounds(0, 0, worldWidth, worldHeight);
-        //  Create loads of random bodies
-        for (var i = 0; i < 100; i++)
-        {
-            var x = Phaser.Math.Between(0, worldWidth);
-            var y = Phaser.Math.Between(0, worldHeight);
-    
-            if (Math.random() < 0.7)
-            {
-                var sides = Phaser.Math.Between(3, 14);
-                var radius = Phaser.Math.Between(8, 50);
-    
-                this.matter.add.polygon(x, y, sides, radius, { restitution: 0.9 });
-            }
-            else
-            {
-                var width = Phaser.Math.Between(16, 128);
-                var height = Phaser.Math.Between(8, 64);
-    
-                this.matter.add.rectangle(x, y, width, height, { chamfer:{radius: 10}, restitution: 0.9 });
-            }
-        }
-    
-        this.matter.add.mouseSpring();
-    
-        var cursors = this.input.keyboard.createCursorKeys();
-    
-        var controlConfig = {
-            camera: this.cameras.main,
-            left: cursors.left,
-            right: cursors.right,
-            up: cursors.up,
-            down: cursors.down,
-            zoomIn: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
-            zoomOut: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
-            acceleration: 0.06,
-            drag: 0.0005,
-            maxSpeed: 1.0
-        };
-    
-        controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
-    
-        this.input.keyboard.on('KEY_DOWN_Z', function (event) {
-    
-            this.cameras.main.rotation += 0.01;
-    
-        }, this);
-    
-        this.input.keyboard.on('KEY_DOWN_X', function (event) {
-    
-            this.cameras.main.rotation -= 0.01;
-    
-        }, this);
-    
-        var cam = this.cameras.main;
-    
-        var gui = new dat.GUI();
-    
-        var p1 = gui.addFolder('Pointer');
-        p1.add(this.input, 'x').listen();
-        p1.add(this.input, 'y').listen();
-        p1.open();
-    
-        var help = {
-            line1: 'Cursors to move',
-            line2: 'Q & E to zoom',
-            line3: 'Z & X to rotate',
-        }
-    
-        var f1 = gui.addFolder('Camera');
-        f1.add(cam, 'x').listen();
-        f1.add(cam, 'y').listen();
-        f1.add(cam, 'scrollX').listen();
-        f1.add(cam, 'scrollY').listen();
-        f1.add(cam, 'rotation').min(0).step(0.01).listen();
-        f1.add(cam, 'zoom', 0.1, 2).step(0.1).listen();
-        f1.add(help, 'line1');
-        f1.add(help, 'line2');
-        f1.add(help, 'line3');
-        f1.open();
+    this.matter.add.rectangle(300,300, 100, 20, { chamfer:{radius: 10}, restitution: 0.7 });
 
+    this.matter.add.circle(300,200, 20, {restitution: 0.7 });
+    this.matter.add.circle(300,100, 20, {restitution: 0.7 });
+    this.matter.add.mouseSpring();
+
+
+    // add stiff multi-body constraint
+    var bodyA = this.matter.bodies.polygon(100, 400, 60, 20);
+    var bodyB = this.matter.bodies.polygon(200, 400, 1, 50);
+
+    var constraint = this.matter.constraint.create({
+        bodyA: bodyA,
+        pointA: { x: 0, y: 0 },
+        bodyB: bodyB,
+        pointB: { x: 0, y: 0 }
+    });
+    this.matter.world.add([bodyA, bodyB, constraint]);
+
+    
     this.terrain.create(this);
   }
  
   public update(time, delta) {
    
-    controls.update(delta);
   }
 }
 

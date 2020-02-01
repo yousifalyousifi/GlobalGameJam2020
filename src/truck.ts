@@ -81,6 +81,7 @@ export class Truck
 
         this.wheelA.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(direction*magnitude,0));
         this.wheelB.applyForceFrom(new V2(this.wheelB.x, this.wheelB.y-30), new V2(direction*magnitude,0));
+        // this.chasis.applyForceFrom(new V2(this.chasis.x, this.chasis.y-30), new V2(direction*magnitude,0));
 
     }
     

@@ -2,7 +2,8 @@
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
 import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain';
-import { isMainThread } from 'worker_threads';
+import { TitleScene } from './title';
+import { BetweenLevelState } from './gamestate';
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -81,8 +82,9 @@ export class GameScene extends Phaser.Scene {
     // });
     // this.matter.world.add([wheelB, carBody, constraint]);
 
-    
-    this.terrain.create(this);
+    let sceneData = (<BetweenLevelState>this.scene.settings.data) || new BetweenLevelState();
+    const level = sceneData.level;
+    this.terrain.create(this, level);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
  
@@ -118,35 +120,12 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-export class TitleScene extends Phaser.Scene {
-  constructor() {
-    super({
-      active: false,
-      visible: false,
-      key: 'Title',
-    });
-  }
-
-  public preload() {
-    this.load.image('title', '../assets/placeholder/quicktitle.png');
-  }
-
-  public create() {
-    this.add.sprite(640, 360, "title");
-    this.add.rectangle(436, 452, 497, 125, 0, 0)
-    .setOrigin(0, 0)
-      .setInteractive()
-      .on('pointerup', () => {
-        this.scene.start('Game');
-      });
-  }
-}
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Global Game Jam 2020',
 
   scene: [GameScene],
-  // scene: [TitleScene, GameScene],
+  //  scene: [TitleScene, GameScene],
  
   type: Phaser.AUTO,
  

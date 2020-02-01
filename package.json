@@ -13,6 +13,7 @@
     "webpack-dev-server": "^3.10.2"
   },
   "dependencies": {
+    "dat.gui": "^0.7.6",
     "phaser": "^3.22.0"
   }
 }

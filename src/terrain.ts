@@ -25,5 +25,8 @@ export class Terrain
     const map = scene.make.tilemap({data: level, tileWidth: 2, tileHeight: 2});
     const tiles = map.addTilesetImage("ground-tiles");
     const layer = map.createStaticLayer(0, tiles, 0, 100);
+
+    // Tile 0 is colliding
+    layer.setCollisionBetween(0, 0);
   }
 }

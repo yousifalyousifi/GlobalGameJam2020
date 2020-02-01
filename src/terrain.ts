@@ -1,5 +1,8 @@
 import * as Phaser from 'phaser';
 
+export const HEIGHTMAP_RESOLUTION = 4;
+export const HEIGHTMAP_YRESOLUTION = 4;
+
 export class Terrain
 {
   heightMap: number[] = [];
@@ -29,8 +32,6 @@ export class Terrain
     const layer = map.createStaticLayer(0, tiles, 0, yOffset);
 
     // Create a height map for the level at a resolution of 4 pixels each
-    const HEIGHTMAP_RESOLUTION = 4;
-    const HEIGHTMAP_YRESOLUTION = 4;
     const holeHeightMap = [0, 1, 1, 2, 3, 3, 4, 5, 5, 4, 4, 3, 2, 2, 1, 0];
     for (let col = 0; col < level[0].length; col++)
     {

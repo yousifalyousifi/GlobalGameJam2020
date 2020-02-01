@@ -1,7 +1,7 @@
 
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
-import { Terrain } from './terrain';
+import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain';
 import { isMainThread } from 'worker_threads';
 
 
@@ -19,6 +19,7 @@ export class GameScene extends Phaser.Scene {
   isScrolling = false;
   skyBackground: Phaser.GameObjects.Sprite;
   potHoleTruckSprite: Phaser.GameObjects.Sprite;
+  roadFillContainer: Phaser.GameObjects.Container;
 
   constructor() {
     super(sceneConfig);
@@ -33,14 +34,20 @@ export class GameScene extends Phaser.Scene {
 
   public create() {
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
-    const scrollButton = this.add.text(100, 100, 'Go!', {fontSize: '30px'})
+    const scrollButton = this.add.text(100, 50, 'Go!', {fontSize: '30px'})
       .setInteractive();
     scrollButton.on('pointerdown', () => {
       this.isScrolling = true; 
       scrollButton.setVisible(false); });
+    const roadFillButton = this.add.text(1100, 50, 'Fill', {fontSize: '30px'})
+      .setInteractive();
+    roadFillButton.on('pointerdown', () => this.fillRoad());
+    this.input.keyboard.addKey('SPACE')
+      .on('down', () => this.fillRoad());
     this.add.sprite(640, 720 - (207 / 2) - 192, "tree1");
     this.add.sprite(2000, 720 - (207 / 2) - 192, "tree1");
     this.add.sprite(1800, 720 - (207 / 2) - 192, "tree1");
+    this.roadFillContainer = this.add.container(0, 0);
 
     var worldWidth = 600;
     var worldHeight = 600;
@@ -79,6 +86,23 @@ export class GameScene extends Phaser.Scene {
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
  
+  fillRoad() {
+    const fillX = this.potHoleTruckSprite.x - 95;
+    const fillHeightMapX = Math.floor(fillX / HEIGHTMAP_RESOLUTION);
+    const fillHeights = [1, 3, 5, 5, 3, 1];
+    const FILL_HEIGHT = 64;
+    for (let fillHeightX = 0; fillHeightX < fillHeights.length; fillHeightX++) {
+      this.roadFillContainer.add(this.add.rectangle(
+        (fillHeightMapX + fillHeightX) * HEIGHTMAP_RESOLUTION,
+        720 - 192 + (this.terrain.heightMap[fillHeightMapX + fillHeightX] - fillHeights[fillHeightX])* HEIGHTMAP_YRESOLUTION + FILL_HEIGHT / 2,
+        HEIGHTMAP_RESOLUTION,
+        FILL_HEIGHT, 
+        0x333333));
+      // this.terrain.heightMap.
+
+    }
+  }
+
   public update(time, delta) {
     if (this.isScrolling) {
       this.potHoleTruckSprite.x += 0.2 * delta;

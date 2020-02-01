@@ -31,7 +31,7 @@ export class Terrain
     for (let row = 0; row < level.length; row++) {
         for (let col = 0; col < level[row].length; col++) {
           if (level[row][col] == 1) continue;
-          let rect = scene.matter.add.rectangle(col * tileWidth, row * 2 + yOffset, tileWidth, 2, { chamfer:{radius: 0.5}, restitution: 0.5 });
+          let rect = scene.matter.add.rectangle(col * tileWidth, row * 2 + yOffset, tileWidth, 2, { chamfer:{radius: 0}, restitution: 0.5 });
           rect.isStatic = true;
         }
     }

@@ -13,6 +13,8 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
   private terrain: Terrain = new Terrain();
+  isScrolling = false;
+  skyBackground: Phaser.GameObjects.Sprite;
 
   constructor() {
     super(sceneConfig);
@@ -21,10 +23,19 @@ export class GameScene extends Phaser.Scene {
   public preload() {
     this.load.image("ground-tiles", "../assets/placeholder/ground_tiles.png");
     this.load.image("sky", "../assets/placeholder/sky.png");
+    this.load.image("tree1", "../assets/placeholder/kenney_foliagePack_005.png");
   }
 
   public create() {
-    this.add.sprite(640, 360, "sky");
+    this.skyBackground = this.add.sprite(0, 0, "sky").setOrigin(0, 0);
+    const scrollButton = this.add.text(100, 100, 'Go!', {fontSize: '30px'})
+      .setInteractive();
+    scrollButton.on('pointerdown', () => {
+      this.isScrolling = true; 
+      scrollButton.setVisible(false); });
+    this.add.sprite(640, 720 - (207 / 2) - 192, "tree1");
+    this.add.sprite(2000, 720 - (207 / 2) - 192, "tree1");
+    this.add.sprite(1800, 720 - (207 / 2) - 192, "tree1");
 
     var worldWidth = 600;
     var worldHeight = 600;
@@ -63,7 +74,10 @@ export class GameScene extends Phaser.Scene {
   }
  
   public update(time, delta) {
-   
+    if (this.isScrolling) {
+      this.cameras.main.x -= 0.2 * delta;
+      this.skyBackground.setPosition(-this.cameras.main.x, 0);
+    }
   }
 }
 

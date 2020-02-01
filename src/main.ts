@@ -24,7 +24,7 @@ export class GameScene extends Phaser.Scene {
 }
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'Sample',
+  title: 'Global Game Jam 2020',
 
   scene: GameScene,
  
@@ -36,8 +36,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   },
  
   physics: {
-    default: 'arcade',
-    arcade: {
+    default: 'matter',
+    matter: {
       debug: true,
     },
   },

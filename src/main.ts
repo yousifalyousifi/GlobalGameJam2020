@@ -29,7 +29,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('box', 'assets/button-line.png');
   }
 
-  public create() {
+  public create() { 
 
     var worldWidth = 800;
     var worldHeight = 600;
@@ -37,35 +37,7 @@ export class GameScene extends Phaser.Scene {
 
     this.matter.add.mouseSpring();
 
-
-    // add stiff multi-body constraint
-    var carBody = this.matter.bodies.rectangle(300, 300, 100, 20, { chamfer:{radius: 10}, restitution: 0.7 });
-    var wheelA = this.matter.bodies.circle(100, 300, 20);
-    var wheelB = this.matter.bodies.circle(200, 300, 20);
-
-    // var car = this.matter.composites.car(300,400,300,10,20);
-    // this.matter.world.add(car);
-
-    var constraint: MatterJS.ConstraintType;
-    constraint = this.matter.constraint.create({
-        bodyA: wheelA,
-        pointA: { x: 0, y: 0 },
-        bodyB: carBody,
-        pointB: { x: 10, y: 0 }
-    });
-    // this.matter.world.add([wheelA, carBody, wheelB]);
-    
-    // constraint = this.matter.constraint.create({
-    //     bodyA: wheelB,
-    //     pointA: { x: 0, y: 0 },
-    //     bodyB: carBody,
-    //     pointB: { x: -10, y: 0 }
-    // });
-    // this.matter.world.add([wheelB, carBody, constraint]);
-
-    
     var floor = this.matter.add.rectangle(400, 500, 600, 20, {friction: 0.1, restitution: 0.3, isStatic: true, angle: 0.1 });
-
     this.ball = this.matter.add.image(300, 300, 'ball', null);
     this.ball.setCircle(20, {
       mass: 1,
@@ -74,6 +46,9 @@ export class GameScene extends Phaser.Scene {
       isStatic: false
     });
     // this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y), new V2(0,-0.1));
+
+    var car = createCar(this.matter, 200,100,300,100,30)
+    this.matter.world.add(car);
 
     // this.terrain.create(this);
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -100,6 +75,72 @@ export class GameScene extends Phaser.Scene {
     }
   }
 }
+
+function createCar(matter: Phaser.Physics.Matter.MatterPhysics, xx, yy, width, height, wheelSize) {
+   
+     var group = matter.world.nextGroup(true);
+     var wheelBase = 50;
+     var wheelAOffset = -width * 0.5 + wheelBase;
+     var wheelBOffset = width * 0.5 - wheelBase;
+     var wheelYOffset = 50;
+ 
+      var body = matter.bodies.rectangle(xx, yy, width, height, { 
+             collisionFilter: {
+                 group: group,
+                 category: 1,
+                 mask: 1
+             },
+             chamfer: {
+                 radius: height * 0.5
+             },
+             density: 0.0002
+         });
+ 
+     var wheelA = matter.bodies.circle(xx + wheelAOffset, yy + wheelYOffset, wheelSize, { 
+         collisionFilter: {
+             group: group,
+             category: 1,
+             mask: 1
+         },
+         friction: 0.8
+     });
+                 
+     var wheelB = matter.bodies.circle(xx + wheelBOffset, yy + wheelYOffset, wheelSize, { 
+         collisionFilter: {
+             group: group,
+             category: 1,
+             mask: 1
+         },
+         friction: 0.8
+     });
+
+     var axelA = matter.constraint.create({
+        bodyB: body,
+        pointB: { x: wheelAOffset, y: wheelYOffset },
+        bodyA: wheelA,
+        stiffness: 1,
+        length: 0
+    });
+                  
+  var axelB = matter.constraint.create({
+      bodyB: body,
+      pointB: { x: wheelBOffset, y: wheelYOffset },
+      bodyA: wheelB,
+      stiffness: 1,
+      length: 0
+  });
+
+     var car = matter.composite.create({
+       label: "car",
+       bodies: [body, wheelA, wheelB],
+       constraints: [axelA, axelB]
+     })
+                 
+
+
+     return car;
+ };
+
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Global Game Jam 2020',

@@ -64,13 +64,13 @@ export class GameScene extends Phaser.Scene {
     // this.matter.world.add([wheelB, carBody, constraint]);
 
     
-    var floor = this.matter.add.rectangle(400, 500, 600, 20, {restitution: 0.7, isStatic: true, angle: 0.1 });
+    var floor = this.matter.add.rectangle(400, 500, 600, 20, {friction: 0.1, restitution: 0.3, isStatic: true, angle: 0.1 });
 
-    this.ball = this.matter.add.image(300, 300, 'ball', null, {
+    this.ball = this.matter.add.image(300, 300, 'ball', null);
+    this.ball.setCircle(20, {
       mass: 1,
       restitution: 0.9,
-      friction: 0.05,
-      circleRadius: 20,
+      friction: 0.1,
       isStatic: false
     });
     // this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y), new V2(0,-0.1));
@@ -83,11 +83,11 @@ export class GameScene extends Phaser.Scene {
    
     if (this.cursors.left.isDown)
     {
-      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y+30), new V2(-0.01,0));
+      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y-30), new V2(-0.001,0));
     }
     else if (this.cursors.right.isDown)
     {
-      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y), new V2(0.01,0));
+      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y-30), new V2(0.001,0));
     }
 
     if (this.cursors.up.isDown)
@@ -116,7 +116,11 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true,
+      debug: {
+        showAxes: true,
+        showAngleIndicator: true,
+        showCollisions: true
+      },
     },
   },
  

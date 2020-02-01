@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Terrain } from './terrain';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -8,14 +9,20 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
- 
+  private terrain: Terrain = new Terrain();
+
   constructor() {
     super(sceneConfig);
   }
  
+  public preload() {
+    this.load.image("ground-tiles", "../assets/tilesets/ground.png");
+  }
+
   public create() {
     this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF) as any;
     this.physics.add.existing(this.square);
+    this.terrain.create(this);
   }
  
   public update() {
@@ -31,8 +38,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
  
   scale: {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 1280,
+    height: 720,
   },
  
   physics: {

@@ -11,24 +11,28 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   key: 'Game',
 };
 
+const CAMERA_TRUCK_X_OFFSET = -900;
+
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
   private terrain: Terrain = new Terrain();
   isScrolling = false;
   skyBackground: Phaser.GameObjects.Sprite;
+  potHoleTruckSprite: Phaser.GameObjects.Sprite;
 
   constructor() {
     super(sceneConfig);
   }
  
   public preload() {
-    this.load.image("ground-tiles", "../assets/placeholder/ground_tiles.png");
-    this.load.image("sky", "../assets/placeholder/sky.png");
-    this.load.image("tree1", "../assets/placeholder/kenney_foliagePack_005.png");
+    this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
+    this.load.image('sky', '../assets/placeholder/sky.png');
+    this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
+    this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
   }
 
   public create() {
-    this.skyBackground = this.add.sprite(0, 0, "sky").setOrigin(0, 0);
+    this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
     const scrollButton = this.add.text(100, 100, 'Go!', {fontSize: '30px'})
       .setInteractive();
     scrollButton.on('pointerdown', () => {
@@ -72,11 +76,13 @@ export class GameScene extends Phaser.Scene {
 
     
     this.terrain.create(this);
+    this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
  
   public update(time, delta) {
     if (this.isScrolling) {
-      this.cameras.main.scrollX += 0.2 * delta;
+      this.potHoleTruckSprite.x += 0.2 * delta;
+      this.cameras.main.scrollX = this.potHoleTruckSprite.x + CAMERA_TRUCK_X_OFFSET;
       this.skyBackground.setPosition(this.cameras.main.scrollX, 0);
     }
   }

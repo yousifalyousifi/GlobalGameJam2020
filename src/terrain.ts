@@ -20,7 +20,7 @@ export class Terrain
         line.push(0);
       }
     }
-    level[0][8] = 1;
+    level[0][17] = 1;
 
     // Create a tilemap and tileset
     const tileWidth = 64;

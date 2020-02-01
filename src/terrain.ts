@@ -1,4 +1,4 @@
-
+import * as Phaser from 'phaser';
 
 export class Terrain
 {
@@ -8,32 +8,30 @@ export class Terrain
 
   }
   create(scene: Phaser.Scene) {
-    const yOffset = 500;
+    const yOffset = 720-192;
 
     // Make some rough sample tiles
     let level: number[][] = [];
-    for (let row = 0; row < 50; row++) {
+    for (let row = 0; row < 1; row++) {
       let line: number[] = [];
       level.push(line);
       for (let col = 0; col < 100; col++) {
-        if (col / 2 < row)
-            line.push(0);
-        else
-            line.push(1);
+        line.push(0);
       }
     }
 
     // Create a tilemap and tileset
-    const map = scene.make.tilemap({data: level, tileWidth: 2, tileHeight: 2});
+    const tileWidth = 64;
+    const map = scene.make.tilemap({data: level, tileWidth: tileWidth, tileHeight: 192});
     const tiles = map.addTilesetImage("ground-tiles");
     const layer = map.createStaticLayer(0, tiles, 0, yOffset);
 
     // Create physics bodies for the tiles
     let staticGroup = scene.matter.add
-    for (let row = 0; row < 50; row++) {
-        for (let col = 0; col < 100; col++) {
+    for (let row = 0; row < level.length; row++) {
+        for (let col = 0; col < level[row].length; col++) {
           if (level[row][col] == 1) continue;
-          let rect = scene.matter.add.rectangle(col * 2, row * 2 + yOffset, 2, 2, { chamfer:{radius: 0.5}, restitution: 0.5 });
+          let rect = scene.matter.add.rectangle(col * tileWidth, row * 2 + yOffset, tileWidth, 2, { chamfer:{radius: 0}, restitution: 0.5 });
           rect.isStatic = true;
         }
     }

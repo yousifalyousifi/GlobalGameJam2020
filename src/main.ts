@@ -19,10 +19,12 @@ export class GameScene extends Phaser.Scene {
   }
  
   public preload() {
-    this.load.image("ground-tiles", "../assets/tilesets/ground.png");
+    this.load.image("ground-tiles", "../assets/placeholder/ground_tiles.png");
+    this.load.image("sky", "../assets/placeholder/sky.png");
   }
 
   public create() {
+    this.add.sprite(640, 360, "sky");
 
     var worldWidth = 600;
     var worldHeight = 600;

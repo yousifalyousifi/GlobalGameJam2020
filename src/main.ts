@@ -1,6 +1,7 @@
 
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
+import { Terrain } from './terrain';
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -12,13 +13,17 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 var controls;
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
- 
+  private terrain: Terrain = new Terrain();
+
   constructor() {
     super(sceneConfig);
   }
  
+  public preload() {
+    this.load.image("ground-tiles", "../assets/tilesets/ground.png");
+  }
+
   public create() {
-    
 
     var worldWidth = 1600;
     var worldHeight = 1200;
@@ -102,6 +107,8 @@ export class GameScene extends Phaser.Scene {
         f1.add(help, 'line2');
         f1.add(help, 'line3');
         f1.open();
+
+    this.terrain.create(this);
   }
  
   public update(time, delta) {
@@ -118,8 +125,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
  
   scale: {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 1280,
+    height: 720,
   },
  
   physics: {

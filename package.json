@@ -13,7 +13,6 @@
     "webpack-dev-server": "^3.10.2"
   },
   "dependencies": {
-    "phaser": "^3.22.0",
-    "yarn": "^2.0.0-rc.27"
+    "phaser": "^3.22.0"
   }
 }

@@ -11,7 +11,7 @@ export class Terrain
     
 
   }
-  create(scene: Phaser.Scene) {
+  create(scene: Phaser.Scene, whichLevel: number) {
     const yOffset = 720-192;
 
     // Make some rough sample tiles

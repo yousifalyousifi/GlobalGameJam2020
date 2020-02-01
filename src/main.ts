@@ -2,6 +2,7 @@
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
 import { Terrain } from './terrain';
+import { isMainThread } from 'worker_threads';
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -75,8 +76,8 @@ export class GameScene extends Phaser.Scene {
  
   public update(time, delta) {
     if (this.isScrolling) {
-      this.cameras.main.x -= 0.2 * delta;
-      this.skyBackground.setPosition(-this.cameras.main.x, 0);
+      this.cameras.main.scrollX += 0.2 * delta;
+      this.skyBackground.setPosition(this.cameras.main.scrollX, 0);
     }
   }
 }

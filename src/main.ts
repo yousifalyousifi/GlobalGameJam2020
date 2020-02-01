@@ -87,19 +87,25 @@ export class GameScene extends Phaser.Scene {
   }
  
   fillRoad() {
-    const fillX = this.potHoleTruckSprite.x - 95;
+    const fillHeights = [1, 1, 2, 3, 4, 4, 5, 5, 4, 4, 3, 2, 1, 1];
+    const fillX = this.potHoleTruckSprite.x - 85 - (fillHeights.length / 2 * HEIGHTMAP_RESOLUTION);
     const fillHeightMapX = Math.floor(fillX / HEIGHTMAP_RESOLUTION);
-    const fillHeights = [1, 3, 5, 5, 3, 1];
+    // Draw in the road fill
+    const yOffset = 720 - 192;
     const FILL_HEIGHT = 64;
     for (let fillHeightX = 0; fillHeightX < fillHeights.length; fillHeightX++) {
       this.roadFillContainer.add(this.add.rectangle(
-        (fillHeightMapX + fillHeightX) * HEIGHTMAP_RESOLUTION,
-        720 - 192 + (this.terrain.heightMap[fillHeightMapX + fillHeightX] - fillHeights[fillHeightX])* HEIGHTMAP_YRESOLUTION + FILL_HEIGHT / 2,
+        (fillHeightMapX + fillHeightX) * HEIGHTMAP_RESOLUTION + HEIGHTMAP_RESOLUTION  / 2,
+        yOffset + (this.terrain.heightMap[fillHeightMapX + fillHeightX] - fillHeights[fillHeightX])* HEIGHTMAP_YRESOLUTION + FILL_HEIGHT / 2,
         HEIGHTMAP_RESOLUTION,
         FILL_HEIGHT, 
-        0x333333));
-      // this.terrain.heightMap.
-
+        0x555555));
+    }
+    // Adjust the height map and the physics
+    for (let fillHeightX = 0; fillHeightX < fillHeights.length; fillHeightX++) {
+      this.terrain.heightMap[fillHeightMapX + fillHeightX] -= fillHeights[fillHeightX];
+      // Will this cause problems to have overlapping physics objects this way?
+      this.terrain.createPhysicsRectangleForHeightMap(fillHeightMapX + fillHeightX, fillHeightMapX + fillHeightX + 1, yOffset, this);
     }
   }
 

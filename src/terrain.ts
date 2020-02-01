@@ -45,17 +45,21 @@ export class Terrain
     }
 
     // Create physics bodies from the height map
-    const PHYSICS_BODY_HEIGHT = 64;
     for (let start = 0; start < this.heightMap.length; start++) {
       let end = start + 1;
       for (; end < this.heightMap.length && this.heightMap[end] == this.heightMap[start]; end++) { }
-      let rect = scene.matter.add.rectangle((start * HEIGHTMAP_RESOLUTION + end * HEIGHTMAP_RESOLUTION) / 2,
-        yOffset + this.heightMap[start] * HEIGHTMAP_YRESOLUTION + PHYSICS_BODY_HEIGHT / 2,
-        (end - start) * HEIGHTMAP_RESOLUTION,
-        PHYSICS_BODY_HEIGHT,
-        { chamfer:{radius: 0}, restitution: 0.5 });
-      rect.isStatic = true;
+      this.createPhysicsRectangleForHeightMap(start, end, yOffset, scene);
       start = end - 1;
     }
+  }
+  public createPhysicsRectangleForHeightMap(start: number, end: number, yOffset: number, scene: Phaser.Scene)
+  {
+    const PHYSICS_BODY_HEIGHT = 64;
+    let rect = scene.matter.add.rectangle((start * HEIGHTMAP_RESOLUTION + end * HEIGHTMAP_RESOLUTION) / 2,
+      yOffset + this.heightMap[start] * HEIGHTMAP_YRESOLUTION + PHYSICS_BODY_HEIGHT / 2,
+      (end - start) * HEIGHTMAP_RESOLUTION,
+      PHYSICS_BODY_HEIGHT,
+      { chamfer:{radius: 0}, restitution: 0.5 });
+    rect.isStatic = true;
   }
 }

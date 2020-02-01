@@ -22,9 +22,9 @@ export class GameScene extends Phaser.Scene {
   
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
   public ball: Phaser.Physics.Matter.Image;
-  car: any;
-  wheelA: any
-  wheelB: any
+  truck: Phaser.Physics.Matter.Image;
+  wheelA: Phaser.Physics.Matter.Image
+  wheelB: Phaser.Physics.Matter.Image
 
   isScrolling = false;
   skyBackground: Phaser.GameObjects.Sprite;
@@ -36,7 +36,7 @@ export class GameScene extends Phaser.Scene {
   }
  
   public preload() {
-    this.load.image('ball', 'assets/placeholder/truck_wheel.png');
+    this.load.image('truckbody', 'assets/placeholder/truck_body.png');
     this.load.image('wheel', 'assets/placeholder/truck_wheel.png');
     this.load.image('box', 'assets/button-line.png');
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
@@ -65,8 +65,6 @@ export class GameScene extends Phaser.Scene {
 
     this.matter.add.mouseSpring();
 
-    var floor = this.matter.add.rectangle(400, 500, 600, 20, {friction: 0.1, restitution: 0.3, isStatic: true, angle: 0.1 });
-
     // this.ball = this.matter.add.image(100, 300, 'ball', null);
     // this.ball.setCircle(20, {
     //   mass: 1,
@@ -76,7 +74,7 @@ export class GameScene extends Phaser.Scene {
     // });
     // this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y), new V2(0,-0.1));
 
-    this.car = createCar(this.matter, 500,100,300,100,30)
+    // this.car = createCar(this.matter, 500,100,300,100,30)
     // this.matter.world.add(this.car.car);
 
     //
@@ -86,31 +84,67 @@ export class GameScene extends Phaser.Scene {
     //
     //
 
+    var truckGroup = this.matter.world.nextGroup(true);
 
-    this.wheelA = this.matter.add.image(150, 0, 'wheel');
-    this.wheelA.setCircle(50, {
-      mass: 10,
+    this.truck = this.matter.add.image(150, 0, 'truckbody');
+    this.truck.setRectangle(300,100, {
+      mass: 30,
       restitution: 0.9,
       friction: 0.4,
-      isStatic: false
+      isStatic: false,
+      collisionFilter: {
+        group: truckGroup
+      }
     });
+    this.truck.scale = 0.3
 
-    this.wheelB = this.matter.add.image(250, 0, 'wheel');
-    this.wheelB.setCircle(50, {
-      mass: 10,
+    this.wheelA = this.matter.add.image(250, 100, 'wheel');
+    this.wheelA.setCircle(30, {
+      mass: 30,
       restitution: 0.9,
       friction: 0.4,
-      isStatic: false
+      isStatic: false,
+      collisionFilter: {
+        group: truckGroup
+      }
+    });
+    this.wheelA.scale = 0.6
+
+    this.wheelB = this.matter.add.image(50, 100, 'wheel');
+    this.wheelB.setCircle(30, {
+      mass: 30,
+      restitution: 0.9,
+      friction: 0.4,
+      isStatic: false,
+      collisionFilter: {
+        group: truckGroup
+      }
+    });
+    this.wheelB.scale = 0.6
+
+    // this.matter.add.constraint(this.wheelA.body, this.wheelB.body, 220, 0.2);
+    
+    
+    this.matter.add.constraint(this.wheelA, this.truck, 40, 0.3, {
+      pointB: {x: 90, y: 50}
+    });
+    this.matter.add.constraint(this.wheelA, this.truck.body, 40, 0.3, {
+      pointB: {x: 130, y: 50}
     });
 
-    this.matter.add.constraint(this.wheelA.body, this.wheelB.body, 220, 0.2);
+    this.matter.add.constraint(this.wheelB, this.truck.body, 40, 0.3, {
+      pointB: {x: -70, y: 50}
+    });
+    this.matter.add.constraint(this.wheelB, this.truck.body, 40, 0.3, {
+      pointB: {x: -110, y: 50}
+    });
+    // this.matter.add.constraint(this.wheelA.body, this.truck.body, 220, 0.2);
 
     // this.terrain.create(this);
     this.cursors = this.input.keyboard.createCursorKeys();
 
     
     // console.log(this.ball.applyForce)
-    console.log(this.car.car)
     this.terrain.create(this);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
@@ -140,16 +174,17 @@ export class GameScene extends Phaser.Scene {
 
   public update(time, delta) {
 
+    var wheelTurnForce = 0.009;
 
     if (this.cursors.left.isDown)
     {
-      this.wheelA.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(-0.0030,0));
-      this.wheelB.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(-0.0030,0));
+      this.wheelA.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(-1*wheelTurnForce,0));
+      this.wheelB.applyForceFrom(new V2(this.wheelB.x, this.wheelB.y-30), new V2(-1*wheelTurnForce,0));
     }
     else if (this.cursors.right.isDown)
     {
-      this.wheelA.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(0.0030,0));
-      this.wheelB.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(0.0030,0));
+      this.wheelA.applyForceFrom(new V2(this.wheelA.x, this.wheelA.y-30), new V2(wheelTurnForce,0));
+      this.wheelB.applyForceFrom(new V2(this.wheelB.x, this.wheelB.y-30), new V2(wheelTurnForce,0));
     }
 
     // if (this.cursors.up.isDown)

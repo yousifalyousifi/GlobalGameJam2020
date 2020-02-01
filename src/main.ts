@@ -19,6 +19,8 @@ export class GameScene extends Phaser.Scene {
   
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
   public ball: Phaser.Physics.Matter.Image;
+  car: any;
+
   isScrolling = false;
   skyBackground: Phaser.GameObjects.Sprite;
 
@@ -27,7 +29,8 @@ export class GameScene extends Phaser.Scene {
   }
  
   public preload() {
-    this.load.image('ball', 'assets/redstone.png');
+    this.load.image('ball', 'assets/placeholder/truck_wheel.png');
+    this.load.image('wheel', 'assets/placeholder/truck_wheel.png');
     this.load.image('box', 'assets/button-line.png');
 
     this.load.image("ground-tiles", "../assets/placeholder/ground_tiles.png");
@@ -53,7 +56,8 @@ export class GameScene extends Phaser.Scene {
     this.matter.add.mouseSpring();
 
     var floor = this.matter.add.rectangle(400, 500, 600, 20, {friction: 0.1, restitution: 0.3, isStatic: true, angle: 0.1 });
-    this.ball = this.matter.add.image(300, 300, 'ball', null);
+
+    this.ball = this.matter.add.image(100, 300, 'ball', null);
     this.ball.setCircle(20, {
       mass: 1,
       restitution: 0.9,
@@ -62,31 +66,67 @@ export class GameScene extends Phaser.Scene {
     });
     // this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y), new V2(0,-0.1));
 
-    var car = createCar(this.matter, 200,100,300,100,30)
-    this.matter.world.add(car);
+    this.car = createCar(this.matter, 300,100,300,100,30)
+    this.matter.world.add(this.car.car);
+
+    //
+    //
+    //
+    //
+    //
+    //
+
+
+    var wheelA = this.matter.add.image(150, 0, 'wheel');
+    wheelA.setCircle(50, {
+      mass: 1,
+      restitution: 0.9,
+      friction: 0.1,
+      isStatic: false
+    });
+
+    var wheelB = this.matter.add.image(150, 0, 'wheel');
+    wheelB.setCircle(50, {
+      mass: 1,
+      restitution: 0.9,
+      friction: 0.1,
+      isStatic: false
+    });
+    
+    var axelB = this.matter.add.constraint(
+      wheelA.body,
+      wheelB.body,
+      100,
+      1
+    );     
 
     // this.terrain.create(this);
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    
+    console.log(this.ball.applyForce)
+    console.log(this.car.car)
   }
  
   public update(time, delta) {
-   
+
+
     if (this.cursors.left.isDown)
     {
-      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y-30), new V2(-0.001,0));
+      this.car.applyForceFrom(new V2(this.car.wheelA.x, this.car.wheelA.y-30), new V2(-0.0005,0));
     }
     else if (this.cursors.right.isDown)
     {
-      this.ball.applyForceFrom(new V2(this.ball.x, this.ball.y-30), new V2(0.001,0));
+      this.car.car.applyForceFrom(new V2(this.car.wheelA.x, this.car.wheelA.y-30), new V2(0.0005,0));
     }
 
     if (this.cursors.up.isDown)
     {
-      this.ball.applyForce(new V2(0,-0.01));
+      this.ball.applyForce(new V2(0,-0.0019));
     }
     else if (this.cursors.down.isDown)
     {
-      this.ball.thrust(0.01);
+      this.ball.applyForce(new V2(0,0.0019));
     }
 
     if (this.isScrolling) {
@@ -103,6 +143,7 @@ function createCar(matter: Phaser.Physics.Matter.MatterPhysics, xx, yy, width, h
      var wheelAOffset = -width * 0.5 + wheelBase;
      var wheelBOffset = width * 0.5 - wheelBase;
      var wheelYOffset = 50;
+     var wheelSeparation = wheelBOffset - wheelAOffset;
  
       var body = matter.bodies.rectangle(xx, yy, width, height, { 
              collisionFilter: {
@@ -111,7 +152,7 @@ function createCar(matter: Phaser.Physics.Matter.MatterPhysics, xx, yy, width, h
                  mask: 1
              },
              chamfer: {
-                 radius: height * 0.5
+                 radius: 1//height * 0.5
              },
              density: 0.0002
          });
@@ -143,22 +184,21 @@ function createCar(matter: Phaser.Physics.Matter.MatterPhysics, xx, yy, width, h
     });
                   
   var axelB = matter.constraint.create({
-      bodyB: body,
-      pointB: { x: wheelBOffset, y: wheelYOffset },
-      bodyA: wheelB,
-      stiffness: 1,
-      length: 0
-  });
+    bodyB: body,
+    pointB: { x: wheelBOffset, y: wheelYOffset },
+    bodyA: wheelB,
+    stiffness: 1,
+    length: 0
+});     
 
      var car = matter.composite.create({
        label: "car",
        bodies: [body, wheelA, wheelB],
        constraints: [axelA, axelB]
      })
-                 
+             
 
-
-     return car;
+     return {car: car, wheelA: wheelA, wheelB: wheelB};
  };
 
 

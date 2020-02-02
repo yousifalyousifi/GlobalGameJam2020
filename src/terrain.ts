@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 
 export const HEIGHTMAP_RESOLUTION = 4;
 export const HEIGHTMAP_YRESOLUTION = 4;
+export const FINISH_FLAG_X_POSITION = 1500;
 
 export class Terrain
 {
@@ -32,7 +33,12 @@ export class Terrain
       if (!spriteName) return;
       backgroundContainer.add(scene.add.sprite(obj.x + obj.width / 2, obj.y - obj.height / 2, spriteName));
     });
-    
+
+
+    let flag = scene.add.sprite(FINISH_FLAG_X_POSITION,350, 'flag');
+    flag.scale = 0.6
+    foregroundContainer.add(flag)
+
     // Read in the ground tile information from tiled
     const tileset = tiled.addTilesetImage("Ground", "ground-tiles");
     const groundLayer = tiled.createStaticLayer("Ground_Tiles", tileset, 0, spriteYOffset);

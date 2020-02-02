@@ -1,6 +1,6 @@
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
-import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain';
+import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION, FINISH_FLAG_X_POSITION } from './terrain';
 import { isMainThread } from 'worker_threads';
 import { BodyType } from 'matter';
 import { Truck } from './truck';
@@ -70,6 +70,8 @@ export class GameScene extends Phaser.Scene {
   truckProgress:ProgressCounter;
   isLosing:boolean;
   isLosingStartTime:number;
+  isWinning:boolean;
+  isWinningStartTime:number;
 
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
@@ -77,6 +79,8 @@ export class GameScene extends Phaser.Scene {
   backgroundContainer: Phaser.GameObjects.Container;
   foregroundContainer: Phaser.GameObjects.Container;
   instructionText: Phaser.GameObjects.Text;
+  scoreText: Phaser.GameObjects.Text;
+  score: number = 0;
 
   music: Phaser.Sound.BaseSound;
   muteButton: Phaser.GameObjects.Sprite;
@@ -99,6 +103,7 @@ export class GameScene extends Phaser.Scene {
     this.truck.preload(this);
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
     this.load.image('sky', '../assets/placeholder/sky.png');
+    this.load.image('flag', '../assets/placeholder/finish_flag.png');
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
     this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
@@ -117,6 +122,8 @@ export class GameScene extends Phaser.Scene {
     this.truckProgress = new ProgressCounter();
     this.isLosing = false;
     this.isLosingStartTime = 0;
+    this.isWinning = false;
+    this.isWinningStartTime = 0;
       
     this.matter.add.mouseSpring();
 
@@ -139,6 +146,12 @@ export class GameScene extends Phaser.Scene {
     //   .setScrollFactor(0);
     // roadFillButton.on('pointerdown', () => this.fillRoad());
 
+    
+    this.scoreText = this.add.text(140, 150, 'Damage: 0 / 5', { fontSize: '30px', align: 'center', color: 'red', fontFamily: 'sans-serif'})
+      .setScrollFactor(0);
+
+    
+
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
       
@@ -155,8 +168,12 @@ export class GameScene extends Phaser.Scene {
 
     this.pickupTruck = new Vehicles.PickupTruck(this);
     this.events.on('barrelDrop', function() {
-      console.log("drop")
-    })
+      this.score++
+      this.scoreText.setText('Damage: ' + this.score + ' / 5')
+      if(this.score >= 5) {
+        this.startLose()
+      }
+    }, this)
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -189,6 +206,14 @@ export class GameScene extends Phaser.Scene {
     this.isLosing = true;
     this.isLosingStartTime = this.totalTime;
     this.add.text(440, 150, 'You lose', { fontSize: '90px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
+      .setScrollFactor(0);
+  }
+
+  startWin() {
+    if (this.isWinning) return;
+    this.isWinning = true;
+    this.isWinningStartTime = this.totalTime;
+    this.add.text(440, 150, 'You win!', { fontSize: '90px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
       .setScrollFactor(0);
   }
 
@@ -247,6 +272,10 @@ export class GameScene extends Phaser.Scene {
         this.truckProgress.noteProgress((this.pickupTruck.chasis.x - this.startTruckX) / delta, delta);
         this.startTruckX = this.pickupTruck.chasis.x;
 
+        if(this.pickupTruck.chasis.x > FINISH_FLAG_X_POSITION + 220) {
+          this.startWin()
+        }
+
         // Check if enough forward progress has happened
         if (this.totalTime > 1000 + this.startTruckTime) {
           if (this.truckProgress.getAverage() < 0.001) {
@@ -258,6 +287,9 @@ export class GameScene extends Phaser.Scene {
 
     // Show the "You lose" text for three seconds and then go back to the title screen
     if (this.isLosing && this.totalTime - this.isLosingStartTime > 3000) {
+      this.scene.start('Title');
+    }
+    if (this.isWinning && this.totalTime - this.isWinningStartTime > 3000) {
       this.scene.start('Title');
     }
 

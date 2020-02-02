@@ -9,7 +9,7 @@ export class Truck {
     public wheelB: any;
 
     preload(scene: Phaser.Scene) {
-        scene.load.image('truckbody', 'assets/placeholder/truck_body.png');
+        scene.load.image('truckbody', 'assets/placeholder/truck_body2.png');
         scene.load.image('wheel', 'assets/placeholder/truck_wheel.png');
     }
 

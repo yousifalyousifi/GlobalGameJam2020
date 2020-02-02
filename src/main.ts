@@ -27,7 +27,6 @@ export class GameScene extends Phaser.Scene {
   isScrolling = false;
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
-  potHoleTruckSprite: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
 
   constructor() {
@@ -44,7 +43,7 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.isScrolling = false;
     }
-    
+
     this.truck.preload(this);
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
     this.load.image('sky', '../assets/placeholder/sky.png');
@@ -66,7 +65,6 @@ export class GameScene extends Phaser.Scene {
 
       scrollButton.on('pointerdown', () => {
         this.isScrolling = true;
-
         scrollButton.setVisible(false);
       });
     }
@@ -77,10 +75,16 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
+      
+    this.input.keyboard.addKey('A')
+    .on('down', () => this.fillRoad(-190));
+    
+    this.input.keyboard.addKey('D')
+      .on('down', () => this.fillRoad(200));
 
     this.roadFillContainer = this.add.container(0, 0);
 
-    // this.truck.createTruck(this, {x:900, y: 300});
+    this.truck.createTruck(this, {x:900, y: 300});
 
     let v = new Vehicles();
     v.createVehicle(this);
@@ -89,12 +93,12 @@ export class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.terrain.create(this, this.sceneData.level);
-    this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
 
-  fillRoad() {
-    const fillHeights = [1, 1, 2, 3, 4, 4, 5, 5, 4, 4, 3, 2, 1, 1];
-    const fillX = this.potHoleTruckSprite.x - 85 - (fillHeights.length / 2 * HEIGHTMAP_RESOLUTION);
+  fillRoad(offset?: number) {
+    offset = offset || -145
+    const fillHeights = [1, 1, 2, 3, 3, 3, 4, 4, 3, 3, 3, 2, 1, 1];
+    const fillX = this.truck.chasis.x + offset - (fillHeights.length / 2 * HEIGHTMAP_RESOLUTION);
     const fillHeightMapX = Math.floor(fillX / HEIGHTMAP_RESOLUTION);
     // Draw in the road fill
     const yOffset = 720 - 192;
@@ -116,16 +120,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(time, delta) {
-    // this.truck.applyRumble();
+    this.truck.applyRumble();
     if (this.cursors.left.isDown) {
-      this.truck.applyDrivingForce(0.009, -1);
+      this.truck.applyDrivingForce(0.018, -1);
     } else if (this.cursors.right.isDown) {
-      this.truck.applyDrivingForce(0.009, 1);
+      this.truck.applyDrivingForce(0.018, 1);
     }
 
     if (this.isScrolling) {
-      this.potHoleTruckSprite.x += 0.2 * delta;
-      this.cameras.main.scrollX = this.potHoleTruckSprite.x + CAMERA_TRUCK_X_OFFSET;
+      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
       this.skyBackground.setPosition(this.cameras.main.scrollX, 0);
     }
   }

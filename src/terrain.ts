@@ -34,7 +34,6 @@ export class Terrain
       backgroundContainer.add(scene.add.sprite(obj.x + obj.width / 2, obj.y - obj.height / 2, spriteName));
     });
 
-
     let flag = scene.add.sprite(FINISH_FLAG_X_POSITION,350, 'flag');
     flag.scale = 0.6
     foregroundContainer.add(flag)

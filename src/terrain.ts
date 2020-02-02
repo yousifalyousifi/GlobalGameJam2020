@@ -51,6 +51,20 @@ export class Terrain
       } else if (groundLayerData[0][col].index == 3) {
         for (let ii = 0; ii < 64 / HEIGHTMAP_RESOLUTION; ii ++)
           this.heightMap.push(7);
+      } else if (groundLayerData[0][col].index == 4) {
+        for (let ii = 0; ii < 64 / HEIGHTMAP_RESOLUTION; ii ++) {
+          if (ii > 10)
+            this.heightMap.push(4);
+          else
+            this.heightMap.push(0);
+        }
+      } else if (groundLayerData[0][col].index == 5) {
+        for (let ii = 0; ii < 64 / HEIGHTMAP_RESOLUTION; ii ++) {
+          if (ii < 5)
+            this.heightMap.push(4);
+          else
+            this.heightMap.push(0);
+        }
       }
     }
 

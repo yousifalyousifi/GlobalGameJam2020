@@ -31,6 +31,8 @@ export class GameScene extends Phaser.Scene {
   backgroundContainer: Phaser.GameObjects.Container;
   foregroundContainer: Phaser.GameObjects.Container;
 
+  music: Phaser.Sound.BaseSound;
+  
   constructor() {
     super(sceneConfig);
   }
@@ -48,6 +50,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
     this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
+    this.load.audio('music', ['../assets/music/Great_Hope_Mono.mp3', '../assets/music/Great_Hope_Mono.ogg']);
     this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
   }
 
@@ -85,6 +88,9 @@ export class GameScene extends Phaser.Scene {
     this.foregroundContainer = this.add.container(0, 0);
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
+
+    this.music = this.sound.add('music', {loop: true});
+    this.music.play();
   }
 
   fillRoad() {

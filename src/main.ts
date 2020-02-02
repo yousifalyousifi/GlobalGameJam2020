@@ -8,6 +8,8 @@ import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
 
+const DEBUG = true;
+
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -35,7 +37,6 @@ export class GameScene extends Phaser.Scene {
 
   music: Phaser.Sound.BaseSound;
   muteButton: Phaser.GameObjects.Sprite;
-  muteStatus = true;
   
   constructor() {
     super(sceneConfig);
@@ -111,12 +112,11 @@ export class GameScene extends Phaser.Scene {
     this.muteButton = this.add.sprite(640 - 8, 30, 'music')
       .setInteractive()
       .setScrollFactor(0);
-    this.sound.mute = this.muteStatus;
-    this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
+    if (DEBUG) this.sound.mute = true;
+    this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
     this.muteButton.on('pointerdown', () => {
-      this.muteStatus = !this.muteStatus;
-      this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
-      this.sound.mute = this.muteStatus;
+      this.sound.mute = !this.sound.mute;
+      this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
     });
 
     this.music = this.sound.add('backgroundMusic', {loop: true});
@@ -188,8 +188,7 @@ export class GameScene extends Phaser.Scene {
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Global Game Jam 2020',
 
-  scene: [GameScene],
-  //  scene: [TitleScene, GameScene],
+  scene: DEBUG ? [GameScene] : [TitleScene, GameScene],
 
   type: Phaser.AUTO,
 
@@ -200,13 +199,14 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 
   physics: {
     default: 'matter',
-    matter: {
+
+    matter: DEBUG ? {
       debug: {
         showAxes: true,
         showAngleIndicator: true,
         showCollisions: true
       },
-    },
+    } : {},
   },
 
   parent: 'game',

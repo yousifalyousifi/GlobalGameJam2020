@@ -28,6 +28,8 @@ export class GameScene extends Phaser.Scene {
   skyBackground: Phaser.GameObjects.Sprite;
   potHoleTruckSprite: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
+  backgroundContainer: Phaser.GameObjects.Container;
+  foregroundContainer: Phaser.GameObjects.Container;
 
   constructor() {
     super(sceneConfig);
@@ -74,12 +76,14 @@ export class GameScene extends Phaser.Scene {
       .on('down', () => this.fillRoad());
 
     this.roadFillContainer = this.add.container(0, 0);
+    this.backgroundContainer = this.add.container(0, 0);
 
     this.truck.createTruck(this);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.terrain.create(this, this.sceneData.level);
+    this.foregroundContainer = this.add.container(0, 0);
+    this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
 

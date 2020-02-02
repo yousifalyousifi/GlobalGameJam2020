@@ -38,6 +38,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('sky', '../assets/placeholder/sky.png');
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
+    this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
   }
 
   public create() {

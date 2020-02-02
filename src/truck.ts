@@ -19,6 +19,7 @@ export class Truck {
 
         this.chasis = scene.matter.add.image(position.x, position.y, 'truckbody');
         this.chasis.setRectangle(300, 100, {
+            label: "TruckChasis",
             mass: 30,
             restitution: 0.9,
             friction: 0.4,
@@ -31,6 +32,7 @@ export class Truck {
 
         this.wheelA = scene.matter.add.image(position.x+100, position.y+100, 'wheel');
         this.wheelA.setCircle(30, {
+            label: "TruckWheelA",
             mass: 30,
             restitution: 0.9,
             friction: 0.4,
@@ -44,6 +46,7 @@ export class Truck {
 
         this.wheelB = scene.matter.add.image(position.x-100, position.y+100, 'wheel');
         this.wheelB.setCircle(30, {
+            label: "TruckWheelB",
             mass: 30,
             restitution: 0.9,
             friction: 0.4,

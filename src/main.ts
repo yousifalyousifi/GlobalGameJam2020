@@ -4,7 +4,7 @@ import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain'
 import { isMainThread } from 'worker_threads';
 import { BodyType } from 'matter';
 import { Truck } from './truck';
-import { Vehicles, Vehicle } from './vehicles';
+import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
 
@@ -21,8 +21,8 @@ export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
   private terrain: Terrain = new Terrain();
   private truck = new Truck();
-  
-  vehicle = new Vehicles()
+
+  private pickupTruck: Vehicles.PickupTruck
 
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
@@ -43,7 +43,7 @@ export class GameScene extends Phaser.Scene {
 
   public preload() {
     
-    new Vehicles().preload(this);
+    Vehicles.PickupTruck.preload(this);
 
     this.sceneData = (<BetweenLevelState>this.scene.settings.data) || new BetweenLevelState();
     if (this.sceneData.startImmediately) {
@@ -101,9 +101,7 @@ export class GameScene extends Phaser.Scene {
 
     this.truck.createTruck(this, {x:900, y: 300});
 
-    this.vehicle = new Vehicles();
-    this.vehicle.createVehicle(this);
-
+    this.pickupTruck = Vehicles.PickupTruck.create(this);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -123,6 +121,22 @@ export class GameScene extends Phaser.Scene {
 
     this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
+
+    this.matter.world.on('collisionstart', function (event) {
+      let a = event.pairs[0].bodyA//.gameObject.setTint(0xff0000);
+      let b = event.pairs[0].bodyB//.gameObject.setTint(0x00ff00);
+      if((a.label == "Barrel" && b.label == "GameFloor")
+      || b.label == "Barrel" && a.label == "GameFloor" ) {
+        console.log("HIT")
+        if(a.label == "Barrel") {
+          a.gameObject.setTint(0xff0000)
+        } else {
+          b.gameObject.setTint(0xff0000)
+        }
+      }
+
+
+    });
   }
 
   fillRoad(offset?: number) {
@@ -151,10 +165,9 @@ export class GameScene extends Phaser.Scene {
 
   public update(time, delta) {
 
-    this.vehicle.applyDrivingForce(0.005, 1);
-    console.log(this.vehicle.chasis.body.velocity)
-    if(this.vehicle.chasis.body.velocity.x < 0.5) {
-      this.vehicle.applyDrivingForce(0.01, 1);
+    this.pickupTruck.applyDrivingForce(0.005, 1);
+    if(this.pickupTruck.chasis.body.velocity.x < 0.5) {
+      this.pickupTruck.applyDrivingForce(0.04, 1);
     }
 
     this.truck.applyRumble();

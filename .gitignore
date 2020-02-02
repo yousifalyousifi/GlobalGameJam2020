@@ -1,2 +1,5 @@
 .yarn/
 node_modules/
+dist/
+submission/
+submission.zip

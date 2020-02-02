@@ -4,6 +4,7 @@ import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain'
 import { isMainThread } from 'worker_threads';
 import { BodyType } from 'matter';
 import { Truck } from './truck';
+import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
 
@@ -33,6 +34,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    
+    new Vehicles().preload(this);
     this.truck.preload(this);
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
     this.load.image('sky', '../assets/placeholder/sky.png');
@@ -68,7 +71,11 @@ export class GameScene extends Phaser.Scene {
 
     this.roadFillContainer = this.add.container(0, 0);
 
-    this.truck.createTruck(this);
+    // this.truck.createTruck(this, {x:900, y: 300});
+
+    let v = new Vehicles();
+    v.createVehicle(this);
+
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -102,7 +109,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(time, delta) {
-    this.truck.applyRumble();
+    // this.truck.applyRumble();
     if (this.cursors.left.isDown) {
       this.truck.applyDrivingForce(0.009, -1);
     } else if (this.cursors.right.isDown) {

@@ -67,7 +67,7 @@ export class Terrain
       yOffset + this.heightMap[start] * HEIGHTMAP_YRESOLUTION + PHYSICS_BODY_HEIGHT / 2,
       (end - start) * HEIGHTMAP_RESOLUTION,
       PHYSICS_BODY_HEIGHT,
-      { label: "GameFloor", chamfer:{radius: 0}, restitution: 0.5 });
+      { label: "GameFloor", chamfer:{radius: 2}, restitution: 0.5 });
     rect.isStatic = true;
   }
 }

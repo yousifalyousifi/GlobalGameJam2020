@@ -86,7 +86,7 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black'})
+    this.instructionText = this.add.text(440, 150, 'Use ←/→ cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black'})
       .setScrollFactor(0);
     // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
     //   .setInteractive()

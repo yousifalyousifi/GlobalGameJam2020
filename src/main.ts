@@ -114,14 +114,19 @@ export class GameScene extends Phaser.Scene {
     this.foregroundContainer = this.add.container(0, 0);
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
 
-    if (DEBUG) this.sound.mute = true;
-    this.muteButton = this.add.sprite(640 - 8, 30, this.sound.mute ? 'nomusic' : 'music')
+    let mute = this.sound.mute;
+    if (DEBUG) {
+      mute = true;
+      this.sound.mute = mute;
+    }
+    this.muteButton = this.add.sprite(640 - 8, 30, mute ? 'nomusic' : 'music')
       .setInteractive()
       .setScrollFactor(0);
-    this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
+    this.muteButton.setTexture(mute ? 'nomusic' : 'music');
     this.muteButton.on('pointerdown', () => {
-      this.sound.mute = !this.sound.mute;
-      this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
+      let nextMute = !this.sound.mute;
+      this.sound.mute = nextMute;
+      this.muteButton.setTexture(nextMute ? 'nomusic' : 'music');
     });
 
     this.music = this.sound.add('backgroundMusic', {loop: true});

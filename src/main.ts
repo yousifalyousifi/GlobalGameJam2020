@@ -101,6 +101,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(time, delta) {
+    this.truck.applyRumble();
     if (this.cursors.left.isDown) {
       this.truck.applyDrivingForce(0.009,-1);
     } else if (this.cursors.right.isDown) {

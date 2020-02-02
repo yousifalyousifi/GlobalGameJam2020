@@ -57,17 +57,23 @@ export class Truck
         scene.matter.add.constraint(this.wheelA, this.chasis, 40, 0.08, {
             pointB: {x: 90, y: 50}
         });
-        scene.matter.add.constraint(this.wheelA, this.chasis.body, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelA, this.chasis, 40, 0.08, {
             pointB: {x: 130, y: 50}
         });
-        scene.matter.add.constraint(this.wheelB, this.chasis.body, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelB, this.chasis, 40, 0.08, {
             pointB: {x: -70, y: 50}
         });
-        scene.matter.add.constraint(this.wheelB, this.chasis.body, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelB, this.chasis, 40, 0.08, {
             pointB: {x: -110, y: 50}
         });
 
         return this;
+    }
+
+    applyRumble() {
+        let vec = new V2(0, Phaser.Math.RND.frac()*0.1001);
+        // Phaser.Math.RandomXY(vec, Phaser.Math.RND.frac()*0.1001);
+        this.chasis.applyForceFrom(new V2(this.chasis.x, this.chasis.y), vec);
     }
 
     /**

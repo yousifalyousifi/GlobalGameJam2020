@@ -7,6 +7,7 @@ import { Truck } from './truck';
 import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
+import { appendFileSync } from 'fs';
 
 const DEBUG = true;
 
@@ -29,11 +30,13 @@ export class GameScene extends Phaser.Scene {
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
   isScrolling = false;
+  totalTime = 0;
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
   backgroundContainer: Phaser.GameObjects.Container;
   foregroundContainer: Phaser.GameObjects.Container;
+  instructionText: Phaser.GameObjects.Text;
 
   music: Phaser.Sound.BaseSound;
   muteButton: Phaser.GameObjects.Sprite;
@@ -71,7 +74,7 @@ export class GameScene extends Phaser.Scene {
     
     this.matter.add.mouseSpring();
 
-    this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
+    this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0).setScrollFactor(0);
 
     if (!this.sceneData.startImmediately) {
       const scrollButton = this.add.text(100, 50, 'Go!', { fontSize: '30px' })
@@ -83,10 +86,12 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
-      .setInteractive()
+    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black'})
       .setScrollFactor(0);
-    roadFillButton.on('pointerdown', () => this.fillRoad());
+    // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
+    //   .setInteractive()
+    //   .setScrollFactor(0);
+    // roadFillButton.on('pointerdown', () => this.fillRoad());
 
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
@@ -164,12 +169,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(time, delta) {
+    this.totalTime += delta;
+    if (this.totalTime > 2000)
+    {
+      this.instructionText.visible = false;
 
-    this.pickupTruck.applyDrivingForce(0.005, 1);
-    if(this.pickupTruck.chasis.body.velocity.x < 0.5) {
-      this.pickupTruck.applyDrivingForce(0.04, 1);
-    }
-
+      this.pickupTruck.applyDrivingForce(0.005, 1);
+      if(this.pickupTruck.chasis.body.velocity.x < 0.5) {
+        this.pickupTruck.applyDrivingForce(0.04, 1);
+      }
+    }  
     this.truck.applyRumble();
     if (this.cursors.left.isDown) {
       this.truck.applyDrivingForce(0.018, -1);
@@ -177,10 +186,8 @@ export class GameScene extends Phaser.Scene {
       this.truck.applyDrivingForce(0.018, 1);
     }
 
-    if (this.isScrolling) {
-      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
-      this.skyBackground.setPosition(this.cameras.main.scrollX, 0);
-    }
+    this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+  
   }
 }
 

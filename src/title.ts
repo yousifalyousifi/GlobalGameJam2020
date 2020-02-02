@@ -23,6 +23,7 @@ export class TitleScene extends Phaser.Scene {
           state.startImmediately = true;
           this.scene.start('Game', state);
         });
+       this.add.text(490, 370, 'Use ←/→ cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
     }
 }
   

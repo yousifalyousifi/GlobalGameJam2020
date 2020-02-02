@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 
 export const HEIGHTMAP_RESOLUTION = 4;
 export const HEIGHTMAP_YRESOLUTION = 4;
-export const FINISH_FLAG_X_POSITION = 1500;
+export const FINISH_FLAG_X_POSITION = 5882;
 
 export class Terrain
 {

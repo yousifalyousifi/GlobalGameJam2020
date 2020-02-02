@@ -103,6 +103,7 @@ export class GameScene extends Phaser.Scene {
      this.isLosingStartTime = 0;
      this.isWinning = false;
      this.isWinningStartTime = 0;
+     this.score = 0;
 
      this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -154,6 +155,7 @@ export class GameScene extends Phaser.Scene {
 
     this.instructionText = this.add.text(440, 150, 'Use ←/→ cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
       .setScrollFactor(0);
+    this.add.text(6302, 300, 'Do your duty', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'});
     // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
     //   .setInteractive()
     //   .setScrollFactor(0);

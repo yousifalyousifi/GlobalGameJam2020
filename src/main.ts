@@ -100,7 +100,7 @@ export class GameScene extends Phaser.Scene {
     .on('down', () => this.fillRoad(-190));
     
     this.input.keyboard.addKey('D')
-      .on('down', () => this.fillRoad(200));
+      .on('down', () => this.fillRoad(210));
 
     this.roadFillContainer = this.add.container(0, 0);
     this.backgroundContainer = this.add.container(0, 0);
@@ -127,21 +127,6 @@ export class GameScene extends Phaser.Scene {
     this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
 
-    this.matter.world.on('collisionstart', function (event) {
-      let a = event.pairs[0].bodyA//.gameObject.setTint(0xff0000);
-      let b = event.pairs[0].bodyB//.gameObject.setTint(0x00ff00);
-      if((a.label == "Barrel" && b.label == "GameFloor")
-      || b.label == "Barrel" && a.label == "GameFloor" ) {
-        console.log("HIT")
-        if(a.label == "Barrel") {
-          a.gameObject.setTint(0xff0000)
-        } else {
-          b.gameObject.setTint(0xff0000)
-        }
-      }
-
-
-    });
   }
 
   fillRoad(offset?: number) {
@@ -170,15 +155,7 @@ export class GameScene extends Phaser.Scene {
 
   public update(time, delta) {
     this.totalTime += delta;
-    if (this.totalTime > 2000)
-    {
-      this.instructionText.visible = false;
 
-      this.pickupTruck.applyDrivingForce(0.005, 1);
-      if(this.pickupTruck.chasis.body.velocity.x < 0.5) {
-        this.pickupTruck.applyDrivingForce(0.04, 1);
-      }
-    }  
     this.truck.applyRumble();
     if (this.cursors.left.isDown) {
       this.truck.applyDrivingForce(0.018, -1);
@@ -186,8 +163,22 @@ export class GameScene extends Phaser.Scene {
       this.truck.applyDrivingForce(0.018, 1);
     }
 
-    this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
-  
+    if (this.isScrolling) {
+      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+
+      
+      if (this.totalTime > 2000)
+      {
+        this.instructionText.visible = false;
+
+        this.pickupTruck.applyDrivingForce(0.005, 1);
+        this.pickupTruck.updateBarrels()
+        if(this.pickupTruck.chasis.body.velocity.x < 0.5) {//Increase force if vehicle is slight stuck
+          this.pickupTruck.applyDrivingForce(0.04, 1);
+
+        }
+      }
+    }
   }
 }
 

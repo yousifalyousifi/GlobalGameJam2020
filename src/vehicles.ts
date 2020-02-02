@@ -10,6 +10,7 @@ export namespace Vehicles {
         chasis: any
         wheelA: any
         wheelB: any
+        barrels: any[]
 
         static preload(scene: Phaser.Scene) {
             scene.load.image('generic_wheel', '../assets/placeholder/generic_wheel.png');
@@ -34,7 +35,7 @@ export namespace Vehicles {
 
             var rectA = scene.matter.bodies.rectangle(pos.x+0, pos.y+10, 300, 35);
             var rectB = scene.matter.bodies.rectangle(pos.x+100, pos.y-40, 100, 60);
-            var rectC = scene.matter.bodies.rectangle(pos.x-140, pos.y-15, 15,15);
+            var rectC = scene.matter.bodies.rectangle(pos.x-140, pos.y-15, 15,10);
 
             var compoundBody = scene.matter.body.create({
                 label: "PickupTruckChasis",
@@ -100,9 +101,8 @@ export namespace Vehicles {
             scene.matter.add.constraint(<any>wheelA, <any>wheelB, 190, 0.08, {
             });
 
-            truck.chasis = chasis
-            truck.wheelB = wheelB
-            truck.wheelA = wheelA
+
+            let barrels = []
 
 
             //Load Objects
@@ -126,18 +126,27 @@ export namespace Vehicles {
                 let barrel = scene.matter.add.image(pos.x-110+step*i,pos.y-30, 'radioactive');
                 barrel.setCircle(20, barrelProps);
                 barrel.scale = 0.4
+                barrels.push(barrel)
             }
             for(let i = 0; i < 4; i++) {
                 let barrel = scene.matter.add.image(pos.x-90+step*i,pos.y-70, 'radioactive');
                 barrel.setCircle(20, barrelProps);
                 barrel.scale = 0.4
+                barrels.push(barrel)
             }
             for(let i = 0; i < 3; i++) {
                 let barrel = scene.matter.add.image(pos.x-70+step*i,pos.y-120, 'radioactive');
                 barrel.setCircle(20, barrelProps);
                 barrel.scale = 0.4
+                barrels.push(barrel)
             }
             ////////////////
+
+            truck.chasis = chasis
+            truck.wheelB = wheelB
+            truck.wheelA = wheelA
+            truck.barrels = barrels
+
             return truck;
 
         }
@@ -150,6 +159,14 @@ export namespace Vehicles {
             this.wheelB.applyForceFrom(new V2(this.wheelB.x, this.wheelB.y - 30), new V2(direction * magnitude, 0));
             // this.chasis.applyForceFrom(new V2(this.chasis.x, this.chasis.y-30), new V2(direction*magnitude,0));
 
+        }
+
+        updateBarrels() {
+            this.barrels.forEach( b => {
+                if(this.chasis.x - b.x > 200) {
+                    b.setTint(0xff0000)
+                }
+            })
         }
     }
 }

@@ -222,6 +222,7 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard.removeKey(this.keyA);
     this.input.keyboard.removeKey(this.keyD);
     this.events.off('shutdown');
+    this.events.off('barrelDrop')
   }
 
   startLose() {

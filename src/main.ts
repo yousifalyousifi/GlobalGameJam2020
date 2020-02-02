@@ -20,7 +20,7 @@ export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
   private terrain: Terrain = new Terrain();
   private truck = new Truck();
-  
+
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
   isScrolling = false;
@@ -31,7 +31,7 @@ export class GameScene extends Phaser.Scene {
   constructor() {
     super(sceneConfig);
   }
- 
+
   public preload() {
     this.truck.preload(this);
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
@@ -41,42 +41,43 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create() {
+    
+    this.matter.add.mouseSpring();
+
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
-    const scrollButton = this.add.text(100, 50, 'Go!', {fontSize: '30px'})
+
+    const scrollButton = this.add.text(100, 50, 'Go!', { fontSize: '30px' })
       .setInteractive();
+
     scrollButton.on('pointerdown', () => {
-      this.isScrolling = true; 
-      scrollButton.setVisible(false); });
-    const roadFillButton = this.add.text(1100, 50, 'Fill', {fontSize: '30px'})
+      this.isScrolling = true;
+
+      scrollButton.setVisible(false);
+    });
+
+    const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
       .setInteractive();
     roadFillButton.on('pointerdown', () => this.fillRoad());
+
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
+
     this.add.sprite(640, 720 - (207 / 2) - 192, "tree1");
     this.add.sprite(2000, 720 - (207 / 2) - 192, "tree1");
     this.add.sprite(1800, 720 - (207 / 2) - 192, "tree1");
+
     this.roadFillContainer = this.add.container(0, 0);
 
     this.truck.createTruck(this);
 
-    this.matter.add.mouseSpring();
-
     this.cursors = this.input.keyboard.createCursorKeys();
-    
-    // constraint = this.matter.constraint.create({
-    //     bodyA: wheelB,
-    //     pointA: { x: 0, y: 0 },
-    //     bodyB: carBody,
-    //     pointB: { x: -10, y: 0 }
-    // });
-    // this.matter.world.add([wheelB, carBody, constraint]);
 
     let sceneData = (<BetweenLevelState>this.scene.settings.data) || new BetweenLevelState();
     const level = sceneData.level;
     this.terrain.create(this, level);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
- 
+
   fillRoad() {
     const fillHeights = [1, 1, 2, 3, 4, 4, 5, 5, 4, 4, 3, 2, 1, 1];
     const fillX = this.potHoleTruckSprite.x - 85 - (fillHeights.length / 2 * HEIGHTMAP_RESOLUTION);
@@ -86,10 +87,10 @@ export class GameScene extends Phaser.Scene {
     const FILL_HEIGHT = 64;
     for (let fillHeightX = 0; fillHeightX < fillHeights.length; fillHeightX++) {
       this.roadFillContainer.add(this.add.rectangle(
-        (fillHeightMapX + fillHeightX) * HEIGHTMAP_RESOLUTION + HEIGHTMAP_RESOLUTION  / 2,
-        yOffset + (this.terrain.heightMap[fillHeightMapX + fillHeightX] - fillHeights[fillHeightX])* HEIGHTMAP_YRESOLUTION + FILL_HEIGHT / 2,
+        (fillHeightMapX + fillHeightX) * HEIGHTMAP_RESOLUTION + HEIGHTMAP_RESOLUTION / 2,
+        yOffset + (this.terrain.heightMap[fillHeightMapX + fillHeightX] - fillHeights[fillHeightX]) * HEIGHTMAP_YRESOLUTION + FILL_HEIGHT / 2,
         HEIGHTMAP_RESOLUTION,
-        FILL_HEIGHT, 
+        FILL_HEIGHT,
         0x555555));
     }
     // Adjust the height map and the physics
@@ -103,9 +104,9 @@ export class GameScene extends Phaser.Scene {
   public update(time, delta) {
     this.truck.applyRumble();
     if (this.cursors.left.isDown) {
-      this.truck.applyDrivingForce(0.009,-1);
+      this.truck.applyDrivingForce(0.009, -1);
     } else if (this.cursors.right.isDown) {
-      this.truck.applyDrivingForce(0.009,1);
+      this.truck.applyDrivingForce(0.009, 1);
     }
 
     if (this.isScrolling) {
@@ -122,14 +123,14 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 
   scene: [GameScene],
   //  scene: [TitleScene, GameScene],
- 
+
   type: Phaser.AUTO,
- 
+
   scale: {
     width: 1280,
     height: 720,
   },
- 
+
   physics: {
     default: 'matter',
     matter: {
@@ -140,9 +141,9 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
       },
     },
   },
- 
+
   parent: 'game',
   backgroundColor: '#000000',
 };
- 
+
 export const game = new Phaser.Game(gameConfig);

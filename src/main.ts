@@ -132,7 +132,7 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
+    this.instructionText = this.add.text(440, 150, 'Use ←/→ cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
       .setScrollFactor(0);
     // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
     //   .setInteractive()
@@ -153,7 +153,10 @@ export class GameScene extends Phaser.Scene {
 
     this.truck.createTruck(this, {x:900, y: 300});
 
-    this.pickupTruck = Vehicles.PickupTruck.create(this);
+    this.pickupTruck = new Vehicles.PickupTruck(this);
+    this.events.on('barrelDrop', function() {
+      console.log("drop")
+    })
 
     this.cursors = this.input.keyboard.createCursorKeys();
 

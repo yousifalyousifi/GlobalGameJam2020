@@ -32,6 +32,8 @@ export class GameScene extends Phaser.Scene {
   foregroundContainer: Phaser.GameObjects.Container;
 
   music: Phaser.Sound.BaseSound;
+  muteButton: Phaser.GameObjects.Sprite;
+  muteStatus = true;
   
   constructor() {
     super(sceneConfig);
@@ -54,7 +56,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
     this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
-    this.load.audio('music', ['../assets/music/Great_Hope_Mono.mp3', '../assets/music/Great_Hope_Mono.ogg']);
+    this.load.image('music', '../assets/icons/music.png');
+    this.load.image('nomusic', '../assets/icons/nomusic.png');
+    this.load.image('sound', '../assets/icons/sound.png');
+    this.load.image('nosound', '../assets/icons/nosound.png');
+    this.load.audio('backgroundMusic', ['../assets/music/Great_Hope_Mono.mp3', '../assets/music/Great_Hope_Mono.ogg']);
     this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
   }
 
@@ -75,7 +81,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
-      .setInteractive();
+      .setInteractive()
+      .setScrollFactor(0);
     roadFillButton.on('pointerdown', () => this.fillRoad());
 
     this.input.keyboard.addKey('SPACE')
@@ -101,7 +108,18 @@ export class GameScene extends Phaser.Scene {
     this.foregroundContainer = this.add.container(0, 0);
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
 
-    this.music = this.sound.add('music', {loop: true});
+    this.muteButton = this.add.sprite(640 - 8, 30, 'music')
+      .setInteractive()
+      .setScrollFactor(0);
+    this.sound.mute = this.muteStatus;
+    this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
+    this.muteButton.on('pointerdown', () => {
+      this.muteStatus = !this.muteStatus;
+      this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
+      this.sound.mute = this.muteStatus;
+    });
+
+    this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
   }
 

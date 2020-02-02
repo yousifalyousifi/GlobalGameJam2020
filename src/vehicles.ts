@@ -11,6 +11,7 @@ export namespace Vehicles {
         wheelA: any
         wheelB: any
         barrels: any[]
+        scene: Phaser.Scene
 
         static preload(scene: Phaser.Scene) {
             scene.load.image('generic_wheel', '../assets/placeholder/generic_wheel.png');
@@ -23,9 +24,7 @@ export namespace Vehicles {
         }
 
 
-        static create(scene: Phaser.Scene) {
-
-            let truck = new PickupTruck()
+        constructor(scene: Phaser.Scene) {
 
             let pos = {x:400, y:446};
             let isStatic = false;
@@ -140,14 +139,17 @@ export namespace Vehicles {
                 barrel.scale = 0.4
                 barrels.push(barrel)
             }
+            
+            barrels.forEach( b => {
+                b.setData('isDropped', false)
+            })
             ////////////////
 
-            truck.chasis = chasis
-            truck.wheelB = wheelB
-            truck.wheelA = wheelA
-            truck.barrels = barrels
-
-            return truck;
+            this.chasis = chasis
+            this.wheelB = wheelB
+            this.wheelA = wheelA
+            this.barrels = barrels
+            this.scene = scene
 
         }
 
@@ -162,9 +164,12 @@ export namespace Vehicles {
         }
 
         updateBarrels() {
+            let xMaxDistance = 200
             this.barrels.forEach( b => {
-                if(this.chasis.x - b.x > 200) {
+                if(this.chasis.x - b.x > xMaxDistance && !(b.getData('isDropped'))) {
+                    b.setData('isDropped', true)
                     b.setTint(0xff0000)
+                    this.scene.events.emit('barrelDrop')
                 }
             })
         }

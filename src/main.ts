@@ -101,7 +101,10 @@ export class GameScene extends Phaser.Scene {
 
     this.truck.createTruck(this, {x:900, y: 300});
 
-    this.pickupTruck = Vehicles.PickupTruck.create(this);
+    this.pickupTruck = new Vehicles.PickupTruck(this);
+    this.events.on('barrelDrop', function() {
+      console.log("drop")
+    })
 
     this.cursors = this.input.keyboard.createCursorKeys();
 

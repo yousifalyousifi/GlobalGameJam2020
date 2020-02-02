@@ -11,7 +11,7 @@ export class Terrain
     
 
   }
-  create(scene: Phaser.Scene, whichLevel: number) {
+  create(scene: Phaser.Scene, whichLevel: number, backgroundContainer: Phaser.GameObjects.Container, foregroundContainer: Phaser.GameObjects.Container) {
     const yOffset = 720-192;
     const spriteYOffset = 720 - 256;
 
@@ -30,7 +30,7 @@ export class Terrain
     tiled.getObjectLayer('Background').objects.forEach(obj => {
       let spriteName = gidToSpriteMap[obj.gid];
       if (!spriteName) return;
-      scene.add.sprite(obj.x + obj.width / 2, obj.y - obj.height / 2, spriteName);
+      backgroundContainer.add(scene.add.sprite(obj.x + obj.width / 2, obj.y - obj.height / 2, spriteName));
     });
     
     // Read in the ground tile information from tiled

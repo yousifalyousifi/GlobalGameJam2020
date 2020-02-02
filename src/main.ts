@@ -28,6 +28,8 @@ export class GameScene extends Phaser.Scene {
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
+  backgroundContainer: Phaser.GameObjects.Container;
+  foregroundContainer: Phaser.GameObjects.Container;
 
   constructor() {
     super(sceneConfig);
@@ -83,6 +85,7 @@ export class GameScene extends Phaser.Scene {
       .on('down', () => this.fillRoad(200));
 
     this.roadFillContainer = this.add.container(0, 0);
+    this.backgroundContainer = this.add.container(0, 0);
 
     this.truck.createTruck(this, {x:900, y: 300});
 
@@ -92,7 +95,8 @@ export class GameScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.terrain.create(this, this.sceneData.level);
+    this.foregroundContainer = this.add.container(0, 0);
+    this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
   }
 
   fillRoad(offset?: number) {

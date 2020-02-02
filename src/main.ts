@@ -20,17 +20,57 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 const CAMERA_TRUCK_X_OFFSET = -900;
 
+class ProgressCounter {
+  times : number[] = [];
+  progress: number[] = [];
+  totalTime = 0;
+  noteProgress(val: number, interval: number)
+  {
+    this.progress.push(val);
+    this.times.push(interval);
+    this.totalTime += interval;
+    if (this.totalTime > 1000) {
+      let time = this.totalTime;
+      let cutoff = 0;
+      for (let n = 0; n < this.times.length; n++) {
+        time -= this.times[n];
+        if (time < 1000) {
+          cutoff = n;
+          break;
+        }
+      }
+      this.progress.splice(0, cutoff);
+      this.times.splice(0, cutoff);
+      this.totalTime = 0;
+      this.times.forEach( time => this.totalTime += time );
+    }
+  }
+  getAverage() {
+    let total = 0;
+    for (let n = 0; n < this.progress.length; n++) {
+      total += this.progress[n] * this.times[n];
+    }
+    return total / this.totalTime;
+  }
+}
+
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
   private terrain: Terrain = new Terrain();
-  private truck = new Truck();
+  private truck: Truck = new Truck();
 
   private pickupTruck: Vehicles.PickupTruck
 
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
-  isScrolling = false;
-  totalTime = 0;
+  isScrolling:boolean = false;
+  totalTime:number;
+  startTruckTime:number;
+  startTruckX:number;
+  truckProgress:ProgressCounter;
+  isLosing:boolean;
+  isLosingStartTime:number;
+
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
@@ -71,7 +111,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create() {
-    
+    this.totalTime = 0;
+    this.startTruckTime = 0;
+    this.startTruckX = 0;
+    this.truckProgress = new ProgressCounter();
+    this.isLosing = false;
+    this.isLosingStartTime = 0;
+      
     this.matter.add.mouseSpring();
 
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0).setScrollFactor(0);
@@ -86,7 +132,7 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black'})
+    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
       .setScrollFactor(0);
     // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
     //   .setInteractive()
@@ -115,6 +161,7 @@ export class GameScene extends Phaser.Scene {
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
 
     let mute = this.sound.mute;
+    this.sound.volume = 0.5;
     if (DEBUG) {
       mute = true;
       this.sound.mute = mute;
@@ -132,6 +179,14 @@ export class GameScene extends Phaser.Scene {
     this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
 
+  }
+
+  startLose() {
+    if (this.isLosing) return;
+    this.isLosing = true;
+    this.isLosingStartTime = this.totalTime;
+    this.add.text(440, 150, 'You lose', { fontSize: '90px', align: 'center', color: 'black', fontFamily: 'sans-serif'})
+      .setScrollFactor(0);
   }
 
   fillRoad(offset?: number) {
@@ -171,20 +226,38 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
     if (this.cameras.main.scrollX < 0) this.cameras.main.scrollX = 0;
 
-    if (this.isScrolling) {
+    if (this.isScrolling && !this.isLosing) {
   
       if (this.totalTime > 2000)
       {
         this.instructionText.visible = false;
+        if (this.startTruckTime == 0) {
+          this.startTruckTime = this.totalTime;
+          this.startTruckX = this.pickupTruck.chasis.x;
+        }
 
         this.pickupTruck.applyDrivingForce(0.005, 1);
         this.pickupTruck.updateBarrels()
         if(this.pickupTruck.chasis.body.velocity.x < 0.5) {//Increase force if vehicle is slight stuck
           this.pickupTruck.applyDrivingForce(0.04, 1);
+        }
+        this.truckProgress.noteProgress((this.pickupTruck.chasis.x - this.startTruckX) / delta, delta);
+        this.startTruckX = this.pickupTruck.chasis.x;
 
+        // Check if enough forward progress has happened
+        if (this.totalTime > 1000 + this.startTruckTime) {
+          if (this.truckProgress.getAverage() < 0.001) {
+            this.startLose();
+          }
         }
       }
     }
+
+    // Show the "You lose" text for three seconds and then go back to the title screen
+    if (this.isLosing && this.totalTime - this.isLosingStartTime > 3000) {
+      this.scene.start('Title');
+    }
+
   }
 }
 

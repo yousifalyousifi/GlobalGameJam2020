@@ -48,6 +48,9 @@ export class Terrain
       } else if (groundLayerData[0][col].index == 2) {
         for (let ii = 0; ii < holeHeightMap.length; ii++)
           this.heightMap.push(holeHeightMap[ii]);
+      } else if (groundLayerData[0][col].index == 3) {
+        for (let ii = 0; ii < 64 / HEIGHTMAP_RESOLUTION; ii ++)
+          this.heightMap.push(7);
       }
     }
 

@@ -1,13 +1,11 @@
 import * as dat from 'dat.gui';
 import * as Phaser from 'phaser';
 import { Terrain, HEIGHTMAP_RESOLUTION, HEIGHTMAP_YRESOLUTION } from './terrain';
-import { isMainThread } from 'worker_threads';
 import { BodyType } from 'matter';
 import { Truck } from './truck';
 import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
-import { appendFileSync } from 'fs';
 
 const DEBUG = true;
 
@@ -78,11 +76,33 @@ export class GameScene extends Phaser.Scene {
   foregroundContainer: Phaser.GameObjects.Container;
   instructionText: Phaser.GameObjects.Text;
 
+  keySpace: Phaser.Input.Keyboard.Key;
+  keyA: Phaser.Input.Keyboard.Key;
+  keyD: Phaser.Input.Keyboard.Key;
+
   music: Phaser.Sound.BaseSound;
   muteButton: Phaser.GameObjects.Sprite;
   
   constructor() {
     super(sceneConfig);
+  }
+
+  public init() {
+     this.terrain = new Terrain();
+     this.truck = new Truck();
+
+     this.totalTime = 0;
+     this.startTruckTime = 0;
+     this.startTruckX = 0;
+     this.truckProgress = new ProgressCounter();
+     this.isLosing = false;
+     this.isLosingStartTime = 0;
+
+     this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.events.on('shutdown', () => this.stop());
+
   }
 
   public preload() {
@@ -111,13 +131,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create() {
-    this.totalTime = 0;
-    this.startTruckTime = 0;
-    this.startTruckX = 0;
-    this.truckProgress = new ProgressCounter();
-    this.isLosing = false;
-    this.isLosingStartTime = 0;
-      
     this.matter.add.mouseSpring();
 
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0).setScrollFactor(0);
@@ -139,13 +152,13 @@ export class GameScene extends Phaser.Scene {
     //   .setScrollFactor(0);
     // roadFillButton.on('pointerdown', () => this.fillRoad());
 
-    this.input.keyboard.addKey('SPACE')
+    this.keySpace
       .on('down', () => this.fillRoad());
       
-    this.input.keyboard.addKey('A')
+    this.keyA
     .on('down', () => this.fillRoad(-190));
     
-    this.input.keyboard.addKey('D')
+    this.keyD
       .on('down', () => this.fillRoad(210));
 
     this.roadFillContainer = this.add.container(0, 0);
@@ -182,6 +195,16 @@ export class GameScene extends Phaser.Scene {
     this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
 
+  }
+
+  public stop() {
+    this.keySpace.off('down');
+    this.keyA.off('down');
+    this.keyD.off('down');
+    this.input.keyboard.removeKey(this.keySpace);
+    this.input.keyboard.removeKey(this.keyA);
+    this.input.keyboard.removeKey(this.keyD);
+    this.events.off('shutdown');
   }
 
   startLose() {
@@ -258,7 +281,7 @@ export class GameScene extends Phaser.Scene {
 
     // Show the "You lose" text for three seconds and then go back to the title screen
     if (this.isLosing && this.totalTime - this.isLosingStartTime > 3000) {
-      this.scene.start('Title');
+      this.scene.start(DEBUG ? 'Game' : 'Title');
     }
 
   }

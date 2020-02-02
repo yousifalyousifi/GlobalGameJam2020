@@ -114,10 +114,10 @@ export class GameScene extends Phaser.Scene {
     this.foregroundContainer = this.add.container(0, 0);
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
 
-    this.muteButton = this.add.sprite(640 - 8, 30, 'music')
+    if (DEBUG) this.sound.mute = true;
+    this.muteButton = this.add.sprite(640 - 8, 30, this.sound.mute ? 'nomusic' : 'music')
       .setInteractive()
       .setScrollFactor(0);
-    if (DEBUG) this.sound.mute = true;
     this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
     this.muteButton.on('pointerdown', () => {
       this.sound.mute = !this.sound.mute;
@@ -163,10 +163,11 @@ export class GameScene extends Phaser.Scene {
       this.truck.applyDrivingForce(0.018, 1);
     }
 
-    if (this.isScrolling) {
-      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+    this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+    if (this.cameras.main.scrollX < 0) this.cameras.main.scrollX = 0;
 
-      
+    if (this.isScrolling) {
+  
       if (this.totalTime > 2000)
       {
         this.instructionText.visible = false;

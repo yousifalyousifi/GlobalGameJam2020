@@ -9,15 +9,15 @@ export class Truck {
     public wheelB: any;
 
     preload(scene: Phaser.Scene) {
-        scene.load.image('truckbody', 'assets/placeholder/truck_body.png');
+        scene.load.image('truckbody', 'assets/placeholder/truck_body2.png');
         scene.load.image('wheel', 'assets/placeholder/truck_wheel.png');
     }
 
-    createTruck(scene: Phaser.Scene) {
+    createTruck(scene: Phaser.Scene, position?: Phaser.Types.Math.Vector2Like) {
 
         var truckGroup = scene.matter.world.nextGroup(true);
 
-        this.chasis = scene.matter.add.image(150, 0, 'truckbody');
+        this.chasis = scene.matter.add.image(position.x, position.y, 'truckbody');
         this.chasis.setRectangle(300, 100, {
             mass: 30,
             restitution: 0.9,
@@ -29,7 +29,7 @@ export class Truck {
         });
         this.chasis.scale = 0.3
 
-        this.wheelA = scene.matter.add.image(250, 100, 'wheel');
+        this.wheelA = scene.matter.add.image(position.x+100, position.y+100, 'wheel');
         this.wheelA.setCircle(30, {
             mass: 30,
             restitution: 0.9,
@@ -41,7 +41,8 @@ export class Truck {
         });
         this.wheelA.scale = 0.6
 
-        this.wheelB = scene.matter.add.image(50, 100, 'wheel');
+
+        this.wheelB = scene.matter.add.image(position.x-100, position.y+100, 'wheel');
         this.wheelB.setCircle(30, {
             mass: 30,
             restitution: 0.9,

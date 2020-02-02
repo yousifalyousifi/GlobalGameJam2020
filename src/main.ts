@@ -7,7 +7,7 @@ import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
 
-const DEBUG = true;
+const DEBUG = false;
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {

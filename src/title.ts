@@ -16,10 +16,12 @@ export class TitleScene extends Phaser.Scene {
     public create() {
       this.add.sprite(640, 360, "title");
       this.add.rectangle(436, 452, 497, 125, 0, 0)
-      .setOrigin(0, 0)
+        .setOrigin(0, 0)
         .setInteractive()
         .on('pointerup', () => {
-          this.scene.start('Game', new BetweenLevelState());
+          let state = new BetweenLevelState();
+          state.startImmediately = true;
+          this.scene.start('Game', state);
         });
     }
 }

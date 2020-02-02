@@ -25,6 +25,7 @@ export class GameScene extends Phaser.Scene {
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
   isScrolling = false;
+  sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
   potHoleTruckSprite: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
@@ -36,11 +37,21 @@ export class GameScene extends Phaser.Scene {
   public preload() {
     
     new Vehicles().preload(this);
+
+    this.sceneData = (<BetweenLevelState>this.scene.settings.data) || new BetweenLevelState();
+    if (this.sceneData.startImmediately) {
+      this.isScrolling = true;
+    } else {
+      this.isScrolling = false;
+    }
+    
     this.truck.preload(this);
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
     this.load.image('sky', '../assets/placeholder/sky.png');
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
+    this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
+    this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
   }
 
   public create() {
@@ -49,14 +60,16 @@ export class GameScene extends Phaser.Scene {
 
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
 
-    const scrollButton = this.add.text(100, 50, 'Go!', { fontSize: '30px' })
+    if (!this.sceneData.startImmediately) {
+      const scrollButton = this.add.text(100, 50, 'Go!', { fontSize: '30px' })
       .setInteractive();
 
-    scrollButton.on('pointerdown', () => {
-      this.isScrolling = true;
+      scrollButton.on('pointerdown', () => {
+        this.isScrolling = true;
 
-      scrollButton.setVisible(false);
-    });
+        scrollButton.setVisible(false);
+      });
+    }
 
     const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
       .setInteractive();
@@ -64,10 +77,6 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
-
-    this.add.sprite(640, 720 - (207 / 2) - 192, "tree1");
-    this.add.sprite(2000, 720 - (207 / 2) - 192, "tree1");
-    this.add.sprite(1800, 720 - (207 / 2) - 192, "tree1");
 
     this.roadFillContainer = this.add.container(0, 0);
 
@@ -79,9 +88,7 @@ export class GameScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    let sceneData = (<BetweenLevelState>this.scene.settings.data) || new BetweenLevelState();
-    const level = sceneData.level;
-    this.terrain.create(this, level);
+    this.terrain.create(this, this.sceneData.level);
     this.potHoleTruckSprite = this.add.sprite(-CAMERA_TRUCK_X_OFFSET, 720 - (212 / 2) - 192, 'potholetruck');
   }
 

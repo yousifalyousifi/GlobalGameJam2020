@@ -16,6 +16,24 @@ export class Terrain
     const spriteYOffset = 720 - 256;
 
     const tiled = scene.make.tilemap({ key: "map" });
+
+    // Find all the object images and how they are mapped to gids
+    const tiledImageToGidMap : { [key: string] : number} = {};
+    tiled.imageCollections[0].images.forEach(img => {
+      tiledImageToGidMap[img.image] = img.gid;
+    });
+    const gidToSpriteMap : { [key: number] : string} = {};
+    gidToSpriteMap[tiledImageToGidMap['../placeholder/kenney_foliagePack_005.png']] = 'tree1'
+    gidToSpriteMap[tiledImageToGidMap['../placeholder/kenney_foliagePack_006.png']] = 'tree2'
+
+    // Generate sprites for each background object
+    tiled.getObjectLayer('Background').objects.forEach(obj => {
+      let spriteName = gidToSpriteMap[obj.gid];
+      if (!spriteName) return;
+      scene.add.sprite(obj.x + obj.width / 2, obj.y - obj.height / 2, spriteName);
+    });
+    
+    // Read in the ground tile information from tiled
     const tileset = tiled.addTilesetImage("Ground", "ground-tiles");
     const groundLayer = tiled.createStaticLayer("Ground_Tiles", tileset, 0, spriteYOffset);
     const groundLayerData = groundLayer.layer.data;
@@ -40,6 +58,7 @@ export class Terrain
       this.createPhysicsRectangleForHeightMap(start, end, yOffset, scene);
       start = end - 1;
     }
+
   }
   public createPhysicsRectangleForHeightMap(start: number, end: number, yOffset: number, scene: Phaser.Scene)
   {

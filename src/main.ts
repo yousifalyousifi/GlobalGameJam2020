@@ -37,6 +37,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
     this.load.image('sky', '../assets/placeholder/sky.png');
     this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
+    this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
     this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
     this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
   }
@@ -62,10 +63,6 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
-
-    this.add.sprite(640, 720 - (207 / 2) - 192, "tree1");
-    this.add.sprite(2000, 720 - (207 / 2) - 192, "tree1");
-    this.add.sprite(1800, 720 - (207 / 2) - 192, "tree1");
 
     this.roadFillContainer = this.add.container(0, 0);
 

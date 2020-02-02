@@ -17,15 +17,76 @@
          "height":1,
          "id":1,
          "name":"Ground_Tiles",
+         "offsetx":0,
+         "offsety":464,
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
          "width":100,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":2,
+         "name":"Background",
+         "objects":[
+                {
+                 "gid":3,
+                 "height":207,
+                 "id":2,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":102,
+                 "x":815.666666666667,
+                 "y":527.666666666667
+                }, 
+                {
+                 "gid":4,
+                 "height":208,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":86,
+                 "x":1694.33333333333,
+                 "y":528.666666666667
+                }, 
+                {
+                 "gid":3,
+                 "height":207,
+                 "id":4,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":102,
+                 "x":1806.33333333333,
+                 "y":527.666666666667
+                }, 
+                {
+                 "gid":4,
+                 "height":208,
+                 "id":5,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":86,
+                 "x":1364.33333333333,
+                 "y":528
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":2,
- "nextobjectid":1,
+ "nextlayerid":3,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.3.2",
@@ -43,6 +104,35 @@
          "tilecount":2,
          "tileheight":256,
          "tilewidth":64
+        }, 
+        {
+         "columns":0,
+         "firstgid":3,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"Background",
+         "spacing":0,
+         "tilecount":2,
+         "tileheight":208,
+         "tiles":[
+                {
+                 "id":0,
+                 "image":"..\/placeholder\/kenney_foliagePack_005.png",
+                 "imageheight":207,
+                 "imagewidth":102
+                }, 
+                {
+                 "id":1,
+                 "image":"..\/placeholder\/kenney_foliagePack_006.png",
+                 "imageheight":208,
+                 "imagewidth":86
+                }],
+         "tilewidth":102
         }],
  "tilewidth":64,
  "type":"map",

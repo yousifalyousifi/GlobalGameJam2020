@@ -54,17 +54,19 @@ export class Truck {
         });
         this.wheelB.scale = 0.6
 
-        scene.matter.add.constraint(this.wheelA, this.chasis, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelA, this.chasis, 50, 0.5, {
             pointB: { x: 90, y: 50 }
         });
-        scene.matter.add.constraint(this.wheelA, this.chasis, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelA, this.chasis, 50, 0.5, {
             pointB: { x: 130, y: 50 }
         });
-        scene.matter.add.constraint(this.wheelB, this.chasis, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelB, this.chasis, 50, 0.5, {
             pointB: { x: -70, y: 50 }
         });
-        scene.matter.add.constraint(this.wheelB, this.chasis, 40, 0.08, {
+        scene.matter.add.constraint(this.wheelB, this.chasis, 50, 0.5, {
             pointB: { x: -110, y: 50 }
+        });
+        scene.matter.add.constraint(this.wheelA, this.wheelB, 190, 0.08, {
         });
 
         return this;

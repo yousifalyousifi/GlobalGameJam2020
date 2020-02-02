@@ -7,6 +7,9 @@ import { Truck } from './truck';
 import { Vehicles } from './vehicles';
 import { TitleScene } from './title';
 import { BetweenLevelState } from './gamestate';
+import { appendFileSync } from 'fs';
+
+const DEBUG = true;
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -27,15 +30,16 @@ export class GameScene extends Phaser.Scene {
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
   isScrolling = false;
+  totalTime = 0;
   sceneData : BetweenLevelState;
   skyBackground: Phaser.GameObjects.Sprite;
   roadFillContainer: Phaser.GameObjects.Container;
   backgroundContainer: Phaser.GameObjects.Container;
   foregroundContainer: Phaser.GameObjects.Container;
+  instructionText: Phaser.GameObjects.Text;
 
   music: Phaser.Sound.BaseSound;
   muteButton: Phaser.GameObjects.Sprite;
-  muteStatus = true;
   
   constructor() {
     super(sceneConfig);
@@ -70,7 +74,7 @@ export class GameScene extends Phaser.Scene {
     
     this.matter.add.mouseSpring();
 
-    this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0);
+    this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0).setScrollFactor(0);
 
     if (!this.sceneData.startImmediately) {
       const scrollButton = this.add.text(100, 50, 'Go!', { fontSize: '30px' })
@@ -82,10 +86,12 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
-      .setInteractive()
+    this.instructionText = this.add.text(440, 150, 'Use cursor keys to move\nUse A and D to fill potholes', { fontSize: '30px', align: 'center', color: 'black'})
       .setScrollFactor(0);
-    roadFillButton.on('pointerdown', () => this.fillRoad());
+    // const roadFillButton = this.add.text(1100, 50, 'Fill', { fontSize: '30px' })
+    //   .setInteractive()
+    //   .setScrollFactor(0);
+    // roadFillButton.on('pointerdown', () => this.fillRoad());
 
     this.input.keyboard.addKey('SPACE')
       .on('down', () => this.fillRoad());
@@ -111,15 +117,14 @@ export class GameScene extends Phaser.Scene {
     this.foregroundContainer = this.add.container(0, 0);
     this.terrain.create(this, this.sceneData.level, this.backgroundContainer, this.foregroundContainer);
 
-    this.muteButton = this.add.sprite(640 - 8, 30, 'music')
+    if (DEBUG) this.sound.mute = true;
+    this.muteButton = this.add.sprite(640 - 8, 30, this.sound.mute ? 'nomusic' : 'music')
       .setInteractive()
       .setScrollFactor(0);
-    this.sound.mute = this.muteStatus;
-    this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
+    this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
     this.muteButton.on('pointerdown', () => {
-      this.muteStatus = !this.muteStatus;
-      this.muteButton.setTexture(this.muteStatus ? 'nomusic' : 'music');
-      this.sound.mute = this.muteStatus;
+      this.sound.mute = !this.sound.mute;
+      this.muteButton.setTexture(this.sound.mute ? 'nomusic' : 'music');
     });
 
     this.music = this.sound.add('backgroundMusic', {loop: true});
@@ -152,6 +157,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   public update(time, delta) {
+    this.totalTime += delta;
 
     this.truck.applyRumble();
     if (this.cursors.left.isDown) {
@@ -160,15 +166,21 @@ export class GameScene extends Phaser.Scene {
       this.truck.applyDrivingForce(0.018, 1);
     }
 
-    if (this.isScrolling) {
-      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
-      this.skyBackground.setPosition(this.cameras.main.scrollX, 0);
+    this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+    if (this.cameras.main.scrollX < 0) this.cameras.main.scrollX = 0;
 
-      
-      this.pickupTruck.applyDrivingForce(0.005, 1);
-      this.pickupTruck.updateBarrels()
-      if(this.pickupTruck.chasis.body.velocity.x < 0.5) {//Increase force if vehicle is slight stuck
-        this.pickupTruck.applyDrivingForce(0.04, 1);
+    if (this.isScrolling) {
+  
+      if (this.totalTime > 2000)
+      {
+        this.instructionText.visible = false;
+
+        this.pickupTruck.applyDrivingForce(0.005, 1);
+        this.pickupTruck.updateBarrels()
+        if(this.pickupTruck.chasis.body.velocity.x < 0.5) {//Increase force if vehicle is slight stuck
+          this.pickupTruck.applyDrivingForce(0.04, 1);
+
+        }
       }
     }
   }
@@ -178,8 +190,7 @@ export class GameScene extends Phaser.Scene {
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Global Game Jam 2020',
 
-  scene: [GameScene],
-  //  scene: [TitleScene, GameScene],
+  scene: DEBUG ? [GameScene] : [TitleScene, GameScene],
 
   type: Phaser.AUTO,
 
@@ -190,13 +201,14 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 
   physics: {
     default: 'matter',
-    matter: {
+
+    matter: DEBUG ? {
       debug: {
         showAxes: true,
         showAngleIndicator: true,
         showCollisions: true
       },
-    },
+    } : {},
   },
 
   parent: 'game',

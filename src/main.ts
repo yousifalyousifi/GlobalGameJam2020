@@ -94,7 +94,7 @@ export class GameScene extends Phaser.Scene {
     .on('down', () => this.fillRoad(-190));
     
     this.input.keyboard.addKey('D')
-      .on('down', () => this.fillRoad(200));
+      .on('down', () => this.fillRoad(210));
 
     this.roadFillContainer = this.add.container(0, 0);
     this.backgroundContainer = this.add.container(0, 0);

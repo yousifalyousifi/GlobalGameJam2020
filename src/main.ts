@@ -215,6 +215,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   public stop() {
+    this.music.stop()
     this.keySpace.off('down');
     this.keyA.off('down');
     this.keyD.off('down');
@@ -268,18 +269,23 @@ export class GameScene extends Phaser.Scene {
   public update(time, delta) {
     this.totalTime += delta;
 
-    this.truck.applyRumble();
+
+    if(this.truck.chasis) {
+      this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
+      this.truck.applyRumble();
+    }
+
     if (this.cursors.left.isDown) {
       this.truck.applyDrivingForce(0.018, -1);
     } else if (this.cursors.right.isDown) {
       this.truck.applyDrivingForce(0.018, 1);
     }
 
-    this.cameras.main.scrollX = this.truck.chasis.x + CAMERA_TRUCK_X_OFFSET;
     if (this.cameras.main.scrollX < 0) this.cameras.main.scrollX = 0;
 
     if (this.isScrolling && !this.isLosing) {
   
+
       if (this.totalTime > 2000)
       {
         this.instructionText.visible = false;

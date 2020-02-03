@@ -19,6 +19,6 @@ yarn 1.9.2 or higher
 `yarn dev` (serves files on localhost:8080)
 
 #### Screenshots
-<img src="/screenshot1.jpg?raw=true">
-<img src="/screenshot2.jpg?raw=true">
+<img src="/assets/screenshots/screenshot1.jpg?raw=true">
+<img src="/assets/screenshots/screenshot2.jpg?raw=true">
 

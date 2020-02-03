@@ -139,7 +139,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create() {
-    this.matter.add.mouseSpring();
+    if(DEBUG) {
+      this.matter.add.mouseSpring();
+    }
 
     this.skyBackground = this.add.sprite(0, 0, 'sky').setOrigin(0, 0).setScrollFactor(0);
 

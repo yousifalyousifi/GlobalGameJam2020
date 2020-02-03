@@ -7,11 +7,15 @@ Typescript + Phaser 3 game.
 
 #### Deveploment environment: 
 Node v12.14.1 or higher
+
 npm v6.13.4 or higher
+
 yarn 1.9.2 or higher
+
 
 #### Set up
 `yarn install`
+
 `yarn dev` (serves files on localhost:8080)
 
 #### Screenshots

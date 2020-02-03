@@ -18,7 +18,8 @@ module.exports = {
     ]
   },
 
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
+  devtool: '',
 
   resolve: {
     extensions: [ '.ts', '.tsx', '.js' ]
@@ -26,7 +27,7 @@ module.exports = {
 
   output: {
     filename: 'app.bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist/src')
   },
 
   mode: 'development',

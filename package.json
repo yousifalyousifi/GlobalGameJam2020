@@ -1,7 +1,7 @@
 {
   "name": "GlobalGameJam2020",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -p",
     "dev": "webpack-dev-server"
   },
   "devDependencies": {
@@ -13,7 +13,6 @@
     "webpack-dev-server": "^3.10.2"
   },
   "dependencies": {
-    "dat.gui": "^0.7.6",
     "phaser": "^3.22.0"
   }
 }

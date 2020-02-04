@@ -14,13 +14,13 @@ export namespace Vehicles {
         scene: Phaser.Scene
 
         static preload(scene: Phaser.Scene) {
-            scene.load.image('generic_wheel', '../assets/placeholder/generic_wheel.png');
-            scene.load.image('radioactive', '../assets/placeholder/radioactive_barrel2.png');
-            scene.load.image('pickup_chasis', '../assets/placeholder/pickup_chasis.png');
-            scene.load.image('spr_car4_0', '../assets/placeholder/spr_car4_0.png');
-            scene.load.image('spr_casualcar_0', '../assets/placeholder/spr_casualcar_0.png');
-            scene.load.image('spr_estatecar_0', '../assets/placeholder/spr_estatecar_0.png');
-            scene.load.image('spr_van_0', '../assets/placeholder/spr_van_0.png');
+            scene.load.image('generic_wheel', 'assets/placeholder/generic_wheel.png');
+            scene.load.image('radioactive', 'assets/placeholder/radioactive_barrel2.png');
+            scene.load.image('pickup_chasis', 'assets/placeholder/pickup_chasis.png');
+            scene.load.image('spr_car4_0', 'assets/placeholder/spr_car4_0.png');
+            scene.load.image('spr_casualcar_0', 'assets/placeholder/spr_casualcar_0.png');
+            scene.load.image('spr_estatecar_0', 'assets/placeholder/spr_estatecar_0.png');
+            scene.load.image('spr_van_0', 'assets/placeholder/spr_van_0.png');
         }
 
 

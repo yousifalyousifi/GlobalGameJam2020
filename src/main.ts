@@ -124,18 +124,18 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.truck.preload(this);
-    this.load.image('ground-tiles', '../assets/placeholder/ground_tiles.png');
-    this.load.image('sky', '../assets/placeholder/sky.png');
-    this.load.image('flag', '../assets/placeholder/finish_flag.png');
-    this.load.image('tree1', '../assets/placeholder/kenney_foliagePack_005.png');
-    this.load.image('tree2', '../assets/placeholder/kenney_foliagePack_006.png');
-    this.load.image('potholetruck', '../assets/placeholder/potholetruck.png');
-    this.load.image('music', '../assets/icons/music.png');
-    this.load.image('nomusic', '../assets/icons/nomusic.png');
-    this.load.image('sound', '../assets/icons/sound.png');
-    this.load.image('nosound', '../assets/icons/nosound.png');
-    this.load.audio('backgroundMusic', ['../assets/music/Great_Hope_Mono.mp3', '../assets/music/Great_Hope_Mono.ogg']);
-    this.load.tilemapTiledJSON('map', '../assets/tiled/level0.json');
+    this.load.image('ground-tiles', 'assets/placeholder/ground_tiles.png');
+    this.load.image('sky', 'assets/placeholder/sky.png');
+    this.load.image('flag', 'assets/placeholder/finish_flag.png');
+    this.load.image('tree1', 'assets/placeholder/kenney_foliagePack_005.png');
+    this.load.image('tree2', 'assets/placeholder/kenney_foliagePack_006.png');
+    this.load.image('potholetruck', 'assets/placeholder/potholetruck.png');
+    this.load.image('music', 'assets/icons/music.png');
+    this.load.image('nomusic', 'assets/icons/nomusic.png');
+    this.load.image('sound', 'assets/icons/sound.png');
+    this.load.image('nosound', 'assets/icons/nosound.png');
+    this.load.audio('backgroundMusic', ['assets/music/Great_Hope_Mono.mp3', 'assets/music/Great_Hope_Mono.ogg']);
+    this.load.tilemapTiledJSON('map', 'assets/tiled/level0.json');
   }
 
   public create() {

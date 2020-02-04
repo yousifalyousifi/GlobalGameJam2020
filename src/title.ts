@@ -10,7 +10,7 @@ export class TitleScene extends Phaser.Scene {
     }
   
     public preload() {
-      this.load.image('title', '../assets/placeholder/quicktitle.png');
+      this.load.image('title', 'assets/placeholder/quicktitle.png');
     }
   
     public create() {

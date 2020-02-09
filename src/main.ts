@@ -61,6 +61,9 @@ export class GameScene extends Phaser.Scene {
 
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
+  private isLeftDown: boolean
+  private isRightDown: boolean
+
   isScrolling:boolean = false;
   totalTime:number;
   startTruckTime:number;
@@ -125,11 +128,14 @@ export class GameScene extends Phaser.Scene {
 
     this.truck.preload(this);
     this.load.image('ground-tiles', 'assets/placeholder/ground_tiles.png');
+    this.load.image('buttonLeft', 'assets/placeholder/buttonLeft.png');
+    this.load.image('buttonRight', 'assets/placeholder/buttonRight.png');
+    this.load.image('buttonA', 'assets/placeholder/buttonA.png');
+    this.load.image('buttonD', 'assets/placeholder/buttonD.png');
     this.load.image('sky', 'assets/placeholder/sky.png');
     this.load.image('flag', 'assets/placeholder/finish_flag.png');
     this.load.image('tree1', 'assets/placeholder/kenney_foliagePack_005.png');
     this.load.image('tree2', 'assets/placeholder/kenney_foliagePack_006.png');
-    this.load.image('potholetruck', 'assets/placeholder/potholetruck.png');
     this.load.image('music', 'assets/icons/music.png');
     this.load.image('nomusic', 'assets/icons/nomusic.png');
     this.load.image('sound', 'assets/icons/sound.png');
@@ -176,6 +182,46 @@ export class GameScene extends Phaser.Scene {
     this.keyD
       .on('down', () => this.fillRoad(210));
 
+    let leftButton = this.add.sprite(930, 650, 'buttonLeft')
+    .setInteractive()
+    .setScrollFactor(0);
+    leftButton.on('pointerdown', () => {
+      this.isLeftDown = true
+    });
+    leftButton.on('pointerup', () => {
+      this.isLeftDown = false
+    });
+    leftButton.on('pointerout', () => {
+      this.isLeftDown = false
+    });
+    
+    let rightButton = this.add.sprite(1150, 650, 'buttonRight')
+    .setInteractive()
+    .setScrollFactor(0);
+    rightButton.on('pointerdown', () => {
+      this.isRightDown = true
+    });
+    rightButton.on('pointerup', () => {
+      this.isRightDown = false
+    });
+    rightButton.on('pointerout', () => {
+      this.isRightDown = false
+    });
+      
+    let buttonA = this.add.sprite(130, 650, 'buttonA')
+    .setInteractive()
+    .setScrollFactor(0);
+    buttonA.on('pointerup', () => {
+      this.fillRoad(-190)
+    });
+    
+    let buttonD = this.add.sprite(350, 650, 'buttonD')
+    .setInteractive()
+    .setScrollFactor(0);
+    buttonD.on('pointerup', () => {
+      this.fillRoad(210)
+    });
+
     this.roadFillContainer = this.add.container(0, 0);
     this.backgroundContainer = this.add.container(0, 0);
 
@@ -214,6 +260,10 @@ export class GameScene extends Phaser.Scene {
     this.music = this.sound.add('backgroundMusic', {loop: true});
     this.music.play();
 
+    leftButton.setDepth(1)
+    rightButton.setDepth(1)
+    buttonA.setDepth(1)
+    buttonD.setDepth(1)
   }
 
   public stop() {
@@ -277,9 +327,9 @@ export class GameScene extends Phaser.Scene {
       this.truck.applyRumble();
     }
 
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown || this.isLeftDown) {
       this.truck.applyDrivingForce(0.018, -1);
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown || this.isRightDown) {
       this.truck.applyDrivingForce(0.018, 1);
     }
 

@@ -182,7 +182,6 @@ export class GameScene extends Phaser.Scene {
     
     this.keyD
       .on('down', () => this.fillRoad(210));
-
     let leftButton = this.add.sprite(930, 650, 'buttonLeft')
     .setInteractive()
     .setScrollFactor(0);
@@ -219,6 +218,7 @@ export class GameScene extends Phaser.Scene {
     let buttonD = this.add.sprite(350, 650, 'buttonD')
     .setInteractive()
     .setScrollFactor(0);
+
     buttonD.on('pointerup', () => {
       this.fillRoad(210)
     });
@@ -391,6 +391,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   scale: {
     width: 1280,
     height: 720,
+  },
+
+  input: {
+    activePointers: 3
   },
 
   physics: {
